@@ -40,11 +40,12 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
 
   // Generate mock schedule for remaining games
   const generateSchedule = (player: Player) => {
-    const opponents = ['@KC', 'vs BUF', '@MIA', 'vs NYJ', '@NE', 'vs CIN', '@BAL'];
-    const weeks = [15, 16, 17, 18, 19, 20, 21];
+    const opponents = ['vs BUF', '@MIA', 'vs NYJ', '@NE', 'vs CIN', '@BAL', 'vs KC', '@DEN', 'vs LAC', '@LV', 'vs HOU', '@IND', 'vs JAX', '@TEN', 'vs CLE', '@PIT', 'vs CIN'];
     
-    return Array.from({ length: player.projections.remainingGames }, (_, i) => ({
-      week: weeks[i] || weeks[i % weeks.length],
+    // Since it's preseason 2025, all 17 games are remaining
+    // Start from week 1 and go through week 17
+    return Array.from({ length: Math.min(17, player.projections.remainingGames) }, (_, i) => ({
+      week: i + 1, // Week 1, 2, 3, etc.
       opponent: opponents[i % opponents.length],
       projectedPoints: (player.projections.projectedPoints[scoringFormat] / player.projections.remainingGames) * (0.8 + Math.random() * 0.4),
       difficulty: ['Easy', 'Medium', 'Hard'][Math.floor(Math.random() * 3)] as 'Easy' | 'Medium' | 'Hard'
