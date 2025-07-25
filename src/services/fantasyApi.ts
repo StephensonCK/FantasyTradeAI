@@ -200,8 +200,29 @@ class FantasyApiService {
     } catch (error) {
       console.error('Error fetching player data from Sleeper API:', error);
       
-      // Fallback to mock data when API fails
-      console.log('API failed, falling back to mock data...');
+      // Try to load from localStorage first
+      try {
+        const cached = localStorage.getItem('fantasyPlayers');
+        if (cached) {
+          const parsedCache = JSON.parse(cached);
+          console.log('Loading cached player data from localStorage...');
+          this.players = parsedCache.players;
+          this.lastFetch = new Date(parsedCache.lastUpdated);
+          
+          const defPlayers = this.players.filter(p => p.position === 'DEF');
+          console.log(`Defense players from cache: ${defPlayers.length}`, defPlayers.map(p => p.name));
+          
+          return {
+            players: this.players,
+            lastUpdated: this.lastFetch
+          };
+        }
+      } catch (cacheError) {
+        console.warn('Failed to load cached data:', cacheError);
+      }
+      
+      // Final fallback to mock data when API fails and no cache
+      console.log('API failed and no cache available, falling back to mock data...');
       const { mockPlayers } = await import('../data/mockPlayers');
       this.players = mockPlayers;
       this.lastFetch = new Date();
@@ -209,6 +230,16 @@ class FantasyApiService {
       // Debug: Log defense players from mock data
       const defPlayers = this.players.filter(p => p.position === 'DEF');
       console.log(`Defense players from mock data: ${defPlayers.length}`, defPlayers.map(p => p.name));
+      
+      // Cache the mock data for future use
+      try {
+        localStorage.setItem('fantasyPlayers', JSON.stringify({
+          players: this.players,
+          lastUpdated: this.lastFetch
+        }));
+      } catch (e) {
+        console.warn('Failed to cache mock data:', e);
+      }
       
       return {
         players: this.players,
@@ -220,16 +251,24 @@ class FantasyApiService {
   private transformSleeperData(sleeperPlayers: { [key: string]: SleeperPlayer }): Player[] {
     const players: Player[] = [];
     
+    console.log('Starting to transform Sleeper data...');
+    console.log('Total Sleeper players received:', Object.keys(sleeperPlayers).length);
+    
     Object.entries(sleeperPlayers).forEach(([playerId, player]) => {
       // Only include players with valid positions
       if (!player.position || !POSITION_MAP[player.position]) {
+        if (player.position === 'DEF') {
+          console.log('Found DEF player but no mapping:', player);
+        }
         return;
       }
 
       // Special handling for DEF players
       if (player.position === 'DEF') {
+        console.log('Processing DEF player:', player.full_name, player.team);
         // Defense teams have different data structure
         if (!player.team || !player.full_name) {
+          console.log('Skipping DEF player due to missing data:', player);
           return;
         }
       } else {
@@ -263,11 +302,19 @@ class FantasyApiService {
         byeWeek: this.getByeWeek(player.team)
       };
 
+      if (player.position === 'DEF') {
+        console.log('Successfully transformed DEF player:', transformedPlayer);
+      }
+
       players.push(transformedPlayer);
     });
 
     // Sort by fantasy points (PPR) and take top players by position
     players.sort((a, b) => b.projections.projectedPoints.ppr - a.projections.projectedPoints.ppr);
+    
+    console.log('Players before position filtering:', players.length);
+    const defPlayersBeforeFilter = players.filter(p => p.position === 'DEF');
+    console.log('DEF players before filtering:', defPlayersBeforeFilter.length, defPlayersBeforeFilter.map(p => p.name));
     
     // Filter to get reasonable number of fantasy-relevant players per position
     const positionLimits = {
@@ -293,6 +340,9 @@ class FantasyApiService {
     }
 
     console.log('Player counts by position:', positionCounts);
+    const finalDefPlayers = filteredPlayers.filter(p => p.position === 'DEF');
+    console.log('Final DEF players:', finalDefPlayers.length, finalDefPlayers.map(p => p.name));
+    
     return filteredPlayers;
   }
 
