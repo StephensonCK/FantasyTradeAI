@@ -146,7 +146,7 @@ export const TradeAnalysis: React.FC<TradeAnalysisProps> = ({ trade }) => {
                 <div className="w-6 h-6 bg-warning text-warning-content rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                   {index + 1}
                 </div>
-                <p className="flex-1 text-warning-content font-medium">{recommendation}</p>
+                <p className="flex-1 text-white font-medium">{recommendation}</p>
               </div>
             ))}
           </div>
