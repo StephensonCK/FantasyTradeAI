@@ -189,6 +189,10 @@ class FantasyApiService {
 
       console.log(`Successfully loaded ${this.players.length} players from Sleeper API`);
       
+      // Debug: Log defense players specifically
+      const defPlayers = this.players.filter(p => p.position === 'DEF');
+      console.log(`Defense players loaded: ${defPlayers.length}`, defPlayers.map(p => p.name));
+      
       return {
         players: this.players,
         lastUpdated: this.lastFetch
@@ -196,24 +200,20 @@ class FantasyApiService {
     } catch (error) {
       console.error('Error fetching player data from Sleeper API:', error);
       
-      // Try to load from localStorage as fallback
-      try {
-        const cached = localStorage.getItem('fantasyPlayers');
-        if (cached) {
-          const data = JSON.parse(cached);
-          this.players = data.players;
-          this.lastFetch = new Date(data.lastUpdated);
-          console.log(`Loaded ${this.players.length} players from cache`);
-          return {
-            players: this.players,
-            lastUpdated: this.lastFetch
-          };
-        }
-      } catch (cacheError) {
-        console.error('Failed to load cached data:', cacheError);
-      }
+      // Fallback to mock data when API fails
+      console.log('API failed, falling back to mock data...');
+      const { mockPlayers } = await import('../data/mockPlayers');
+      this.players = mockPlayers;
+      this.lastFetch = new Date();
       
-      throw new Error('Failed to fetch player data from API and no cached data available');
+      // Debug: Log defense players from mock data
+      const defPlayers = this.players.filter(p => p.position === 'DEF');
+      console.log(`Defense players from mock data: ${defPlayers.length}`, defPlayers.map(p => p.name));
+      
+      return {
+        players: this.players,
+        lastUpdated: this.lastFetch
+      };
     }
   }
 
@@ -221,30 +221,32 @@ class FantasyApiService {
     const players: Player[] = [];
     
     Object.entries(sleeperPlayers).forEach(([playerId, player]) => {
-      // Only include players with valid positions and teams
-      if (!player.position || !POSITION_MAP[player.position] || !player.team) {
+      // Only include players with valid positions
+      if (!player.position || !POSITION_MAP[player.position]) {
         return;
       }
 
-      // Skip inactive, retired, or practice squad players for main roster
-      if (!player.active || 
-          player.injury_status === 'Retired' || 
-          player.status === 'Retired' ||
-          player.status === 'Inactive' ||
-          player.status === 'Practice Squad' ||
-          !player.full_name ||
-          player.years_exp === null) {
-        return;
-      }
-
-      // Skip players who are not currently on NFL rosters (2024 season and beyond)
-      if (player.years_exp !== null && player.years_exp > 15) {
-        return;
-      }
-
-      // Skip players without current team assignment
-      if (!player.team || player.team === 'FA' || player.team === 'UFA') {
-        return;
+      // Special handling for DEF players
+      if (player.position === 'DEF') {
+        // Defense teams have different data structure
+        if (!player.team || !player.full_name) {
+          return;
+        }
+      } else {
+        // Regular player validation
+        if (!player.team || 
+            !player.active || 
+            player.injury_status === 'Retired' || 
+            player.status === 'Retired' ||
+            player.status === 'Inactive' ||
+            player.status === 'Practice Squad' ||
+            !player.full_name ||
+            player.years_exp === null ||
+            player.years_exp > 15 ||
+            player.team === 'FA' || 
+            player.team === 'UFA') {
+          return;
+        }
       }
 
       // Generate realistic stats based on player data
@@ -265,7 +267,7 @@ class FantasyApiService {
     });
 
     // Sort by fantasy points (PPR) and take top players by position
-    players.sort((a, b) => b.stats.fantasyPoints.ppr - a.stats.fantasyPoints.ppr);
+    players.sort((a, b) => b.projections.projectedPoints.ppr - a.projections.projectedPoints.ppr);
     
     // Filter to get reasonable number of fantasy-relevant players per position
     const positionLimits = {
