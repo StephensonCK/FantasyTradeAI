@@ -261,7 +261,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
       </div>
       
       {/* Player List */}
-      <div className="max-h-96 overflow-y-auto">
+      <div className="max-h-[600px] overflow-y-auto">
         {debouncedSearchTerm.trim() && filteredPlayers.length === 0 ? (
           <div className="p-8 text-center text-base-content/50">
             <Users className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
