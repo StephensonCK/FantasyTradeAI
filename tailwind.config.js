@@ -7,6 +7,9 @@ export default {
         'tomorrow': ['Tomorrow', 'sans-serif'],
         'noto': ['Noto Sans', 'sans-serif'],
       },
+      colors: {
+        primary: '#135bf9',
+      },
       borderRadius: {
         DEFAULT: '0.25rem',
       },

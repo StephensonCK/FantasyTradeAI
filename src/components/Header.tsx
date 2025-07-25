@@ -21,7 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="p-3 rounded shadow-lg" style={{ backgroundColor: '#135bf9' }}>
+            <div className="p-3 rounded shadow-lg bg-primary">
               <img 
                 src="/icons/file.svg" 
                 alt="Fantasy Trade AI Logo" 
