@@ -75,6 +75,10 @@ function App() {
     setShowAnalysis(false);
   };
 
+  const clearTradeHistory = () => {
+    setTradeHistory([]);
+  };
+
   const handleTradeHistorySelect = (trade: Trade) => {
     setSelectedPlayers({
       user1: trade.user1Players,
@@ -161,6 +165,7 @@ function App() {
             <TradeHistory 
               trades={tradeHistory}
               onSelectTrade={handleTradeHistorySelect}
+              onClearHistory={clearTradeHistory}
             />
           </div>
         </div>

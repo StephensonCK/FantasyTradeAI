@@ -1,13 +1,21 @@
 import React from 'react';
-import { Clock, TrendingUp, BarChart3 } from 'lucide-react';
+import { Clock, TrendingUp, BarChart3, Trash2 } from 'lucide-react';
 import { Trade } from '../types';
 
 interface TradeHistoryProps {
   trades: Trade[];
   onSelectTrade: (trade: Trade) => void;
+  onClearHistory: () => void;
 }
 
-export const TradeHistory: React.FC<TradeHistoryProps> = ({ trades, onSelectTrade }) => {
+export const TradeHistory: React.FC<TradeHistoryProps> = ({ trades, onSelectTrade, onClearHistory }) => {
+  const [showConfirmDialog, setShowConfirmDialog] = React.useState(false);
+
+  const handleClearHistory = () => {
+    onClearHistory();
+    setShowConfirmDialog(false);
+  };
+
   if (trades.length === 0) {
     return (
       <div className="bg-base-100 rounded shadow-lg border border-base-300 p-8 transition-colors">
@@ -27,10 +35,18 @@ export const TradeHistory: React.FC<TradeHistoryProps> = ({ trades, onSelectTrad
           <div className="bg-neutral p-3 rounded">
             <Clock className="w-5 h-5 text-neutral-content" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-xl font-bold text-base-content font-tomorrow">Trade History</h2>
             <p className="text-base-content/60 text-sm font-noto">Recent trade analyses</p>
           </div>
+          <button
+            onClick={() => setShowConfirmDialog(true)}
+            className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
+            title="Clear all trade history"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="hidden sm:inline">Clear History</span>
+          </button>
         </div>
       </div>
 
@@ -80,6 +96,44 @@ export const TradeHistory: React.FC<TradeHistoryProps> = ({ trades, onSelectTrad
           ))}
         </div>
       </div>
+
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-base-100 rounded-lg shadow-xl border border-base-300 p-6 max-w-md mx-4">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="bg-error/10 p-3 rounded">
+                <Trash2 className="w-6 h-6 text-error" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-base-content font-tomorrow">Clear Trade History</h3>
+                <p className="text-base-content/60 text-sm font-noto">This action cannot be undone</p>
+              </div>
+            </div>
+            
+            <p className="text-base-content mb-6">
+              Are you sure you want to delete all {trades.length} trade{trades.length !== 1 ? 's' : ''} from your history? 
+              This will permanently remove all your saved trade analyses.
+            </p>
+            
+            <div className="flex items-center justify-end space-x-3">
+              <button
+                onClick={() => setShowConfirmDialog(false)}
+                className="btn btn-ghost"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleClearHistory}
+                className="btn btn-error flex items-center space-x-2"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span>Clear History</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
