@@ -129,14 +129,14 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => onAssignToTeam(player, 'user1')}
-                    className="btn btn-info btn-sm flex items-center space-x-1"
+                    className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600"
                   >
                     <Users className="w-4 h-4" />
                     <span>Team 1</span>
                   </button>
                   <button
                     onClick={() => onAssignToTeam(player, 'user2')}
-                    className="btn btn-success btn-sm flex items-center space-x-1"
+                    className="btn btn-sm flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600"
                   >
                     <Users className="w-4 h-4" />
                     <span>Team 2</span>
