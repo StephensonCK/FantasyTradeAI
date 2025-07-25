@@ -185,6 +185,17 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                 
                 <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
                   <div className="flex items-center justify-center space-x-1 mb-2">
+                    <Activity className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-base-content/60">Actual Points</span>
+                  </div>
+                  <span className="text-lg font-bold text-base-content">
+                    {player.stats.fantasyPoints[scoringFormat].toFixed(1)}
+                  </span>
+                  <p className="text-xs text-base-content/50 mt-1">{scoringFormat.toUpperCase()} Points</p>
+                </div>
+                
+                <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
                     <TrendingUp className="w-4 h-4 text-success" />
                     <span className="text-sm font-semibold text-base-content/60">Per Game</span>
                   </div>
