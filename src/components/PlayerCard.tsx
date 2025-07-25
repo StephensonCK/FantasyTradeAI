@@ -75,10 +75,10 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
     switch (player.injuryStatus) {
       case 'questionable':
       case 'doubtful':
-        return 'border-warning bg-warning/20 shadow-lg shadow-warning/30';
+        return '!border-warning !bg-warning/20 shadow-lg shadow-warning/30 !border-2';
       case 'out':
       case 'ir':
-        return 'border-error bg-error/20 shadow-lg shadow-error/30';
+        return '!border-error !bg-error/20 shadow-lg shadow-error/30 !border-2';
       default:
         return 'border-base-300 bg-base-100';
     }
@@ -123,7 +123,7 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
   }
 
   return (
-    <div className={`hover:border-primary/30 rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] ${getCardStatusStyling()}`}>
+    <div className={`rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] ${getCardStatusStyling()}`}>
       {/* Main Player Info */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-2">
