@@ -1,5 +1,4 @@
 import React from 'react';
-import { BarChart3, RefreshCw } from 'lucide-react';
 import { ScoringFormatSelector } from './ScoringFormatSelector';
 
 interface HeaderProps {
@@ -22,8 +21,13 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="container mx-auto px-4 py-6 max-w-7xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center space-x-3">
-            <div className="bg-primary p-3 rounded shadow-lg">
-              <BarChart3 className="w-8 h-8 text-primary-content" />
+            <div className="p-3 rounded shadow-lg" style={{ backgroundColor: '#135bf9' }}>
+              <img 
+                src="/icons/file.svg" 
+                alt="Fantasy Trade AI Logo" 
+                className="w-8 h-8"
+                style={{ filter: 'brightness(0) invert(1)' }}
+              />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-base-content font-tomorrow">
