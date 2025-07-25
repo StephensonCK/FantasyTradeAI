@@ -9,19 +9,12 @@ interface PlayerSearchProps {
   players: Player[];
   onPlayerSelect: (player: Player, side: 'user1' | 'user2') => void;
   scoringFormat: 'standard' | 'halfPpr' | 'ppr';
-  selectedPlayers: {
-    user1: Player[];
-    user2: Player[];
-  };
-  onRemovePlayer: (playerId: string, side: 'user1' | 'user2') => void;
 }
 
 export const PlayerSearch: React.FC<PlayerSearchProps> = ({ 
   players, 
   onPlayerSelect, 
-  scoringFormat,
-  selectedPlayers,
-  onRemovePlayer
+  scoringFormat 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showTypeahead, setShowTypeahead] = useState(false);
@@ -32,15 +25,6 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
   const [sortBy, setSortBy] = useState<'points' | 'rank' | 'name'>('points');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
-
-  // Get all selected player IDs
-  const selectedPlayerIds = new Set([
-    ...selectedPlayers.user1.map(p => p.id),
-    ...selectedPlayers.user2.map(p => p.id)
-  ]);
-
-  // Get all selected players for the selected players section
-  const allSelectedPlayers = [...selectedPlayers.user1, ...selectedPlayers.user2];
 
   const positions = ['all', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'];
   const teams = useMemo(() => {
@@ -59,11 +43,6 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
 
   const filteredPlayers = useMemo(() => {
     let filtered = players.filter(player => {
-      // Exclude already selected players from search results
-      if (selectedPlayerIds.has(player.id)) {
-        return false;
-      }
-      
       const matchesSearch = player.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
                           player.team.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
       const matchesPosition = selectedPosition === 'all' || player.position === selectedPosition;
@@ -88,7 +67,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
     });
 
     return filtered;
-  }, [players, debouncedSearchTerm, selectedPosition, selectedTeam, selectedInjuryStatus, sortBy, scoringFormat, selectedPlayerIds]);
+  }, [players, debouncedSearchTerm, selectedPosition, selectedTeam, selectedInjuryStatus, sortBy, scoringFormat]);
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -281,84 +260,8 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
         )}
       </div>
       
-      {/* Selected Players Section */}
-      {allSelectedPlayers.length > 0 && (
-        <div className="border-b border-base-300">
-          <div className="p-6 bg-base-200">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="bg-success p-2 rounded">
-                  <Users className="w-5 h-5 text-success-content" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-base-content font-tomorrow">Selected Players</h3>
-                  <p className="text-base-content/60 text-sm font-noto">
-                    {allSelectedPlayers.length} player{allSelectedPlayers.length !== 1 ? 's' : ''} selected for trade
-                  </p>
-                </div>
-              </div>
-              <div className="text-sm text-base-content/60">
-                Team 1: {selectedPlayers.user1.length} | Team 2: {selectedPlayers.user2.length}
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Team 1 Selected Players */}
-              <div>
-                <h4 className="text-sm font-semibold text-info mb-3 flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-info rounded-full"></div>
-                  <span>Team 1 ({selectedPlayers.user1.length})</span>
-                </h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedPlayers.user1.length === 0 ? (
-                    <div className="text-center py-4 text-base-content/40 border-2 border-dashed border-base-300 rounded">
-                      <Users className="w-6 h-6 mx-auto mb-1" />
-                      <p className="text-sm">No players selected</p>
-                    </div>
-                  ) : (
-                    selectedPlayers.user1.map(player => (
-                      <PlayerCard
-                        key={player.id}
-                        player={player}
-                        onRemove={(playerId) => onRemovePlayer(playerId, 'user1')}
-                        variant="trade"
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
-              
-              {/* Team 2 Selected Players */}
-              <div>
-                <h4 className="text-sm font-semibold text-success mb-3 flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-success rounded-full"></div>
-                  <span>Team 2 ({selectedPlayers.user2.length})</span>
-                </h4>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {selectedPlayers.user2.length === 0 ? (
-                    <div className="text-center py-4 text-base-content/40 border-2 border-dashed border-base-300 rounded">
-                      <Users className="w-6 h-6 mx-auto mb-1" />
-                      <p className="text-sm">No players selected</p>
-                    </div>
-                  ) : (
-                    selectedPlayers.user2.map(player => (
-                      <PlayerCard
-                        key={player.id}
-                        player={player}
-                        onRemove={(playerId) => onRemovePlayer(playerId, 'user2')}
-                        variant="trade"
-                      />
-                    ))
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-      
       {/* Player List */}
-      <div className="max-h-[600px] overflow-y-auto">
+      <div className="max-h-96 overflow-y-auto">
         {debouncedSearchTerm.trim() && filteredPlayers.length === 0 ? (
           <div className="p-8 text-center text-base-content/50">
             <Users className="w-12 h-12 mx-auto mb-3 text-base-content/30" />

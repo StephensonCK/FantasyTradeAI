@@ -147,8 +147,6 @@ function App() {
               players={players}
               onPlayerSelect={addPlayerToTrade}
               scoringFormat={scoringFormat}
-              selectedPlayers={selectedPlayers}
-              onRemovePlayer={removePlayerFromTrade}
             />
           </div>
           
