@@ -17,6 +17,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
   scoringFormat 
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showTypeahead, setShowTypeahead] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
   const [selectedTeam, setSelectedTeam] = useState<string>('all');
   const [selectedInjuryStatus, setSelectedInjuryStatus] = useState<string>('all');
@@ -111,20 +112,24 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            onFocus={() => setShowTypeahead(true)}
+            onBlur={() => setTimeout(() => setShowTypeahead(false), 150)}
             placeholder="Type to search players or teams..."
             className="input input-bordered w-full pl-10 pr-4"
             autoComplete="off"
           />
           
           {/* Typeahead Suggestions */}
-          {debouncedSearchTerm && filteredPlayers.length > 0 && (
+          {showTypeahead && debouncedSearchTerm && filteredPlayers.length > 0 && (
             <div className="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded shadow-lg max-h-60 overflow-auto">
               {filteredPlayers.slice(0, 8).map((player) => (
                 <div
                   key={player.id}
                   className="px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors border-b border-base-300 last:border-b-0"
+                  onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing before click
                   onClick={() => {
                     setSearchTerm(player.name);
+                    setShowTypeahead(false);
                   }}
                 >
                   <div className="flex items-center justify-between">
