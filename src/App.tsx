@@ -7,6 +7,7 @@ import { TradeAnalysis } from './components/TradeAnalysis';
 import { TradeHistory } from './components/TradeHistory';
 import { PlayerComparison } from './components/PlayerComparison';
 import { ScoringFormatSelector } from './components/ScoringFormatSelector';
+import { SelectedPlayersView } from './components/SelectedPlayersView';
 import { DataStatus } from './components/DataStatus';
 import { Footer } from './components/Footer';
 import { LoadingSpinner } from './components/LoadingSpinner';
@@ -39,6 +40,7 @@ function App() {
     player1: null,
     player2: null
   });
+  const [selectedPlayersForView, setSelectedPlayersForView] = useLocalStorage<Player[]>('tradeAnalyzer_selectedPlayersView', []);
 
   const addPlayerToTrade = (player: Player, side: 'user1' | 'user2') => {
     setSelectedPlayers(prev => ({
@@ -52,6 +54,27 @@ function App() {
       ...prev,
       [side]: prev[side].filter(p => p.id !== playerId)
     }));
+  };
+
+  const addPlayerToSelectedView = (player: Player) => {
+    setSelectedPlayersForView(prev => {
+      // Don't add duplicates
+      if (prev.some(p => p.id === player.id)) {
+        return prev;
+      }
+      return [...prev, player];
+    });
+  };
+
+  const removePlayerFromSelectedView = (playerId: string) => {
+    setSelectedPlayersForView(prev => prev.filter(p => p.id !== playerId));
+  };
+
+  const assignPlayerToTeam = (player: Player, side: 'user1' | 'user2') => {
+    // Add to trade interface
+    addPlayerToTrade(player, side);
+    // Remove from selected view
+    removePlayerFromSelectedView(player.id);
   };
 
   const analyzeTrade = () => {
@@ -145,7 +168,17 @@ function App() {
           <div>
             <PlayerSearch 
               players={players}
-              onPlayerSelect={addPlayerToTrade}
+              onPlayerSelect={addPlayerToSelectedView}
+              scoringFormat={scoringFormat}
+            />
+          </div>
+          
+          {/* Selected Players View - Full Width */}
+          <div>
+            <SelectedPlayersView
+              selectedPlayers={selectedPlayersForView}
+              onRemovePlayer={removePlayerFromSelectedView}
+              onAssignToTeam={assignPlayerToTeam}
               scoringFormat={scoringFormat}
             />
           </div>

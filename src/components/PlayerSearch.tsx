@@ -7,7 +7,7 @@ import { useDebounce } from '../hooks/useDebounce';
 
 interface PlayerSearchProps {
   players: Player[];
-  onPlayerSelect: (player: Player, side: 'user1' | 'user2') => void;
+  onPlayerSelect: (player: Player) => void;
   scoringFormat: 'standard' | 'halfPpr' | 'ppr';
 }
 
@@ -130,6 +130,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
                   onClick={() => {
                     setSearchTerm(player.name);
                     setShowTypeahead(false);
+                    onPlayerSelect(player);
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -279,7 +280,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
               <PlayerCard
                 key={player.id}
                 player={player}
-                onSelect={onPlayerSelect}
+                onSelect={(player) => onPlayerSelect(player)}
                 variant="search"
               />
             ))}
