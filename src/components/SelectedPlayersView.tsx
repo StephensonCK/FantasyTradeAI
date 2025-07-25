@@ -167,10 +167,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                     <span className="text-sm font-semibold text-base-content/60">Actual Points</span>
                   </div>
                   <span className="text-lg font-bold text-base-content">
-                    {player.stats.fantasyPoints[scoringFormat] > 0 
-                      ? player.stats.fantasyPoints[scoringFormat].toFixed(1)
-                      : '—'
-                    }
+                    {player.stats.fantasyPoints[scoringFormat].toFixed(1)}
                   </span>
                   <p className="text-xs text-base-content/50 mt-1">{scoringFormat.toUpperCase()} Points</p>
                 </div>
