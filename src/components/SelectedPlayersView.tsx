@@ -151,7 +151,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
               </div>
 
               {/* Detailed Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
                 <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
                   <div className="flex items-center justify-center space-x-1 mb-2">
                     <Target className="w-4 h-4 text-info" />
@@ -159,6 +159,20 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                   </div>
                   <span className="text-lg font-bold text-info">#{player.stats.positionRank}</span>
                   <p className="text-xs text-base-content/50 mt-1">{player.position} Position</p>
+                </div>
+                
+                <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
+                  <div className="flex items-center justify-center space-x-1 mb-2">
+                    <Activity className="w-4 h-4 text-primary" />
+                    <span className="text-sm font-semibold text-base-content/60">Actual Points</span>
+                  </div>
+                  <span className="text-lg font-bold text-base-content">
+                    {player.stats.fantasyPoints[scoringFormat] > 0 
+                      ? player.stats.fantasyPoints[scoringFormat].toFixed(1)
+                      : '—'
+                    }
+                  </span>
+                  <p className="text-xs text-base-content/50 mt-1">{scoringFormat.toUpperCase()} Points</p>
                 </div>
                 
                 <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
