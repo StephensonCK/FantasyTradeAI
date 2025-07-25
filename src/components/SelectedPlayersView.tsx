@@ -237,6 +237,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                           <th className="text-base-content font-bold">Week</th>
                           <th className="text-base-content font-bold">Opponent</th>
                           <th className="text-base-content font-bold">Difficulty</th>
+                          <th className="text-base-content font-bold text-right">Actual Points</th>
                           <th className="text-base-content font-bold text-right">Projected Points</th>
                         </tr>
                       </thead>
@@ -253,6 +254,12 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                               <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(game.difficulty)}`}>
                                 {game.difficulty}
                               </span>
+                            </td>
+                            <td className="text-right">
+                              <span className="text-lg font-bold text-primary">
+                                0.0
+                              </span>
+                              <span className="text-xs text-base-content/50 ml-1">pts</span>
                             </td>
                             <td className="text-right">
                               <span className="text-lg font-bold text-success">
