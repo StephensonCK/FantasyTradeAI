@@ -86,7 +86,13 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
 
   if (variant === 'trade') {
     return (
-      <div className={`rounded p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] ${getCardStatusStyling()}`}>
+      <div className={`rounded p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] border ${
+        player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful'
+          ? '!border-warning !bg-warning/20 !shadow-warning/30 !border-2'
+          : player.injuryStatus === 'out' || player.injuryStatus === 'ir'
+          ? '!border-error !bg-error/20 !shadow-error/30 !border-2'
+          : 'border-base-300 bg-base-100'
+      }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {renderPlayerImage('sm')}
@@ -123,7 +129,13 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
   }
 
   return (
-    <div className={`rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] ${getCardStatusStyling()}`}>
+    <div className={`rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] border ${
+      player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful'
+        ? '!border-warning !bg-warning/20 !shadow-warning/30 !border-2'
+        : player.injuryStatus === 'out' || player.injuryStatus === 'ir'
+        ? '!border-error !bg-error/20 !shadow-error/30 !border-2'
+        : 'border-base-300 bg-base-100'
+    }`}>
       {/* Main Player Info */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-2">
