@@ -171,8 +171,8 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
               {player.injuryStatus !== 'healthy' && (
                 <div className={`flex items-center space-x-1 px-1.5 py-0.5 rounded ${
                   player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful' 
-                    ? 'bg-warning/20 border border-warning/40' 
-                    : 'bg-error/20 border border-error/40'
+                    ? 'bg-warning/20' 
+                    : 'bg-error/20'
                 }`}>
                   <AlertCircle className={`w-3 h-3 ${
                     player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful'
