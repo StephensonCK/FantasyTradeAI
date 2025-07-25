@@ -3,11 +3,45 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    font-size: 18px; /* Increased base font size from default 16px */
+  }
+  
   body {
     font-family: 'Noto Sans', sans-serif;
+    font-size: 1rem; /* Now equals 18px */
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Tomorrow', sans-serif;
+  }
+  
+  /* Ensure minimum text size is 14pt (0.875rem = ~15.75px with 18px base) */
+  .text-xs {
+    font-size: 0.875rem !important; /* 15.75px - minimum size */
+  }
+  
+  .text-sm {
+    font-size: 1rem !important; /* 18px */
+  }
+  
+  .text-base {
+    font-size: 1.125rem !important; /* 20.25px */
+  }
+  
+  .text-lg {
+    font-size: 1.25rem !important; /* 22.5px */
+  }
+  
+  .text-xl {
+    font-size: 1.5rem !important; /* 27px */
+  }
+  
+  .text-2xl {
+    font-size: 1.75rem !important; /* 31.5px */
+  }
+  
+  .text-3xl {
+    font-size: 2rem !important; /* 36px */
   }
 }
