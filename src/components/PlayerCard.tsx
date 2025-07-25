@@ -84,15 +84,33 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
     }
   };
 
+  const getInjuryStyles = () => {
+    if (player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful') {
+      return {
+        backgroundColor: 'rgba(251, 191, 36, 0.2)', // warning color with 20% opacity
+        borderColor: 'rgb(251, 191, 36)', // solid warning color
+        borderWidth: '2px',
+        boxShadow: '0 4px 6px -1px rgba(251, 191, 36, 0.3)'
+      };
+    } else if (player.injuryStatus === 'out' || player.injuryStatus === 'ir') {
+      return {
+        backgroundColor: 'rgba(239, 68, 68, 0.2)', // error color with 20% opacity
+        borderColor: 'rgb(239, 68, 68)', // solid error color
+        borderWidth: '2px',
+        boxShadow: '0 4px 6px -1px rgba(239, 68, 68, 0.3)'
+      };
+    }
+    return {};
+  };
+
   if (variant === 'trade') {
     return (
-      <div className={`rounded p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] border ${
-        player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful'
-          ? '!border-warning !bg-warning/20 !shadow-warning/30 !border-2'
-          : player.injuryStatus === 'out' || player.injuryStatus === 'ir'
-          ? '!border-error !bg-error/20 !shadow-error/30 !border-2'
-          : 'border-base-300 bg-base-100'
-      }`}>
+      <div 
+        className={`rounded p-4 shadow-md hover:shadow-lg transition-all duration-300 hover:scale-[1.01] border ${
+          player.injuryStatus === 'healthy' ? 'border-base-300 bg-base-100' : ''
+        }`}
+        style={getInjuryStyles()}
+      >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {renderPlayerImage('sm')}
@@ -129,13 +147,12 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
   }
 
   return (
-    <div className={`rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] border ${
-      player.injuryStatus === 'questionable' || player.injuryStatus === 'doubtful'
-        ? '!border-warning !bg-warning/20 !shadow-warning/30 !border-2'
-        : player.injuryStatus === 'out' || player.injuryStatus === 'ir'
-        ? '!border-error !bg-error/20 !shadow-error/30 !border-2'
-        : 'border-base-300 bg-base-100'
-    }`}>
+    <div 
+      className={`rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] border ${
+        player.injuryStatus === 'healthy' ? 'border-base-300 bg-base-100' : ''
+      }`}
+      style={getInjuryStyles()}
+    >
       {/* Main Player Info */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-2">
