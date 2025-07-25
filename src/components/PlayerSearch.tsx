@@ -124,7 +124,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
                   key={player.id}
                   className="px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors border-b border-base-300 last:border-b-0"
                   onClick={() => {
-                    setSearchTerm('');
+                    setSearchTerm(player.name);
                   }}
                 >
                   <div className="flex items-center justify-between">
@@ -173,7 +173,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
           )}
         </div>
         
-        {/* Typeahead Suggestions - Only show when user is actively searching */}
+        {/* Filters - Only show when user is actively searching */}
         {debouncedSearchTerm.trim() && filteredPlayers.length > 0 && (
           <div className="mt-4 space-y-4 p-4 bg-base-200 rounded">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
