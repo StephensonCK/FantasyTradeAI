@@ -173,8 +173,8 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
           )}
         </div>
         
-        {/* Filters */}
-        {showFilters && (
+        {/* Typeahead Suggestions - Only show when user is actively searching */}
+        {debouncedSearchTerm.trim() && filteredPlayers.length > 0 && (
           <div className="mt-4 space-y-4 p-4 bg-base-200 rounded">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -257,7 +257,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
       
       {/* Player List */}
       <div className="max-h-96 overflow-y-auto">
-        {filteredPlayers.length === 0 ? (
+        {debouncedSearchTerm.trim() && filteredPlayers.length === 0 ? (
           <div className="p-8 text-center text-base-content/50">
             <Users className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
             <p>No players found matching your criteria</p>
@@ -268,7 +268,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
               Clear filters to see all players
             </button>
           </div>
-        ) : (
+        ) : debouncedSearchTerm.trim() ? (
           <div className="p-4 space-y-2">
             {filteredPlayers.map(player => (
               <PlayerCard
@@ -279,11 +279,17 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
               />
             ))}
           </div>
+        ) : (
+          <div className="p-8 text-center text-base-content/50">
+            <Search className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
+            <p>Start typing to search for players</p>
+            <p className="text-sm mt-1">Search by player name or team</p>
+          </div>
         )}
       </div>
       
       <div className="p-4 bg-base-200 text-center text-sm text-base-content/60 rounded-b">
-        Showing {filteredPlayers.length} of {players.length} players
+        {debouncedSearchTerm.trim() ? `Showing ${filteredPlayers.length} of ${players.length} players` : `${players.length} players available`}
       </div>
     </div>
   );
