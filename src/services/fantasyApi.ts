@@ -29,6 +29,42 @@ const TEAM_MAP: { [key: string]: string } = {
   'SEA': 'SEA', 'TB': 'TB', 'TEN': 'TEN', 'WAS': 'WAS'
 };
 
+// NFL team defenses
+const NFL_DEFENSES = [
+  { team: 'ARI', name: 'Arizona Cardinals' },
+  { team: 'ATL', name: 'Atlanta Falcons' },
+  { team: 'BAL', name: 'Baltimore Ravens' },
+  { team: 'BUF', name: 'Buffalo Bills' },
+  { team: 'CAR', name: 'Carolina Panthers' },
+  { team: 'CHI', name: 'Chicago Bears' },
+  { team: 'CIN', name: 'Cincinnati Bengals' },
+  { team: 'CLE', name: 'Cleveland Browns' },
+  { team: 'DAL', name: 'Dallas Cowboys' },
+  { team: 'DEN', name: 'Denver Broncos' },
+  { team: 'DET', name: 'Detroit Lions' },
+  { team: 'GB', name: 'Green Bay Packers' },
+  { team: 'HOU', name: 'Houston Texans' },
+  { team: 'IND', name: 'Indianapolis Colts' },
+  { team: 'JAX', name: 'Jacksonville Jaguars' },
+  { team: 'KC', name: 'Kansas City Chiefs' },
+  { team: 'LV', name: 'Las Vegas Raiders' },
+  { team: 'LAC', name: 'Los Angeles Chargers' },
+  { team: 'LAR', name: 'Los Angeles Rams' },
+  { team: 'MIA', name: 'Miami Dolphins' },
+  { team: 'MIN', name: 'Minnesota Vikings' },
+  { team: 'NE', name: 'New England Patriots' },
+  { team: 'NO', name: 'New Orleans Saints' },
+  { team: 'NYG', name: 'New York Giants' },
+  { team: 'NYJ', name: 'New York Jets' },
+  { team: 'PHI', name: 'Philadelphia Eagles' },
+  { team: 'PIT', name: 'Pittsburgh Steelers' },
+  { team: 'SF', name: 'San Francisco 49ers' },
+  { team: 'SEA', name: 'Seattle Seahawks' },
+  { team: 'TB', name: 'Tampa Bay Buccaneers' },
+  { team: 'TEN', name: 'Tennessee Titans' },
+  { team: 'WAS', name: 'Washington Commanders' }
+];
+
 interface SleeperPlayer {
   player_id: string;
   first_name: string;
@@ -149,6 +185,41 @@ const generateRealisticStats = (player: SleeperPlayer, position: string): {
   };
 };
 
+// Generate defense stats
+const generateDefenseStats = (teamCode: string): {
+  stats: Player['stats'];
+  projections: Player['projections'];
+} => {
+  const basePoints = 120 + (Math.random() * 80); // 120-200 points
+  
+  return {
+    stats: {
+      gamesPlayed: 0,
+      fantasyPoints: {
+        standard: 0,
+        halfPpr: 0,
+        ppr: 0
+      },
+      avgPointsPerGame: {
+        standard: 0,
+        halfPpr: 0,
+        ppr: 0
+      },
+      positionRank: Math.floor(Math.random() * 32) + 1,
+      trend: ['up', 'down', 'stable'][Math.floor(Math.random() * 3)] as 'up' | 'down' | 'stable'
+    },
+    projections: {
+      remainingGames: 17,
+      projectedPoints: {
+        standard: Math.round(basePoints * 10) / 10,
+        halfPpr: Math.round(basePoints * 10) / 10,
+        ppr: Math.round(basePoints * 10) / 10
+      },
+      confidenceScore: Math.floor(Math.random() * 25) + 70
+    }
+  };
+};
+
 class FantasyApiService {
   private players: Player[] = [];
   private lastFetch: Date | null = null;
@@ -160,40 +231,31 @@ class FantasyApiService {
         Date.now() - this.lastFetch.getTime() < this.CACHE_DURATION &&
         this.players.length > 0) {
       console.log('Using cached data with', this.players.length, 'players');
-      const defPlayers = this.players.filter(p => p.position === 'DEF');
-      console.log('Cached DEF players:', defPlayers.length, defPlayers.map(p => p.name));
       return {
         players: this.players,
         lastUpdated: this.lastFetch
       };
     }
 
-    // Always start with mock data to ensure we have defense players
-    console.log('Loading mock data as base...');
-    const { mockPlayers } = await import('../data/mockPlayers');
-    let baseDefensePlayers = mockPlayers.filter(p => p.position === 'DEF');
-    console.log('Mock defense players loaded:', baseDefensePlayers.length, baseDefensePlayers.map(p => p.name));
-
     try {
-      console.log('Fetching fresh player data from Sleeper API...');
+      console.log('Fetching ALL active NFL players from Sleeper API...');
       const response = await axios.get(NFL_PLAYERS_URL, {
         timeout: 10000 // 10 second timeout
       });
       
       const sleeperPlayers: { [key: string]: SleeperPlayer } = response.data;
+      console.log('Total players received from Sleeper API:', Object.keys(sleeperPlayers).length);
       
       // Transform Sleeper data to our Player format
       const apiPlayers = this.transformSleeperData(sleeperPlayers);
+      console.log('Players after transformation:', apiPlayers.length);
       
-      // Always include mock defense players since Sleeper API often doesn't have them
-      const apiDefPlayers = apiPlayers.filter(p => p.position === 'DEF');
-      console.log('API defense players found:', apiDefPlayers.length);
+      // Add all NFL defenses since Sleeper API doesn't include them
+      const defenseTeams = this.createDefenseTeams();
+      console.log('Adding NFL defense teams:', defenseTeams.length);
       
-      // Combine API players with mock defense players (remove duplicates by team)
-      const nonDefApiPlayers = apiPlayers.filter(p => p.position !== 'DEF');
-      const allDefPlayers = apiDefPlayers.length > 0 ? apiDefPlayers : baseDefensePlayers;
-      
-      this.players = [...nonDefApiPlayers, ...allDefPlayers];
+      // Combine offensive players with defense teams
+      this.players = [...apiPlayers, ...defenseTeams];
       this.lastFetch = new Date();
       
       // Store in localStorage for offline capability
@@ -206,11 +268,32 @@ class FantasyApiService {
         console.warn('Failed to cache player data in localStorage:', e);
       }
 
-      console.log(`Successfully loaded ${this.players.length} players from Sleeper API`);
+      console.log(`Successfully loaded ${this.players.length} total players (${apiPlayers.length} offensive + ${defenseTeams.length} defenses)`);
       
-      // Debug: Log defense players specifically
+      // Log player counts by position
       const defPlayers = this.players.filter(p => p.position === 'DEF');
-      console.log(`Defense players loaded: ${defPlayers.length}`, defPlayers.map(p => p.name));
+      const qbPlayers = this.players.filter(p => p.position === 'QB');
+      const rbPlayers = this.players.filter(p => p.position === 'RB');
+      const wrPlayers = this.players.filter(p => p.position === 'WR');
+      const tePlayers = this.players.filter(p => p.position === 'TE');
+      const kPlayers = this.players.filter(p => p.position === 'K');
+      
+      console.log('Player counts by position:', {
+        QB: qbPlayers.length,
+        RB: rbPlayers.length,
+        WR: wrPlayers.length,
+        TE: tePlayers.length,
+        K: kPlayers.length,
+        DEF: defPlayers.length
+      });
+      
+      // Check for Patrick Mahomes specifically
+      const mahomes = this.players.find(p => p.name.toLowerCase().includes('mahomes'));
+      if (mahomes) {
+        console.log('✅ Patrick Mahomes found:', mahomes.name, mahomes.team, mahomes.position);
+      } else {
+        console.log('❌ Patrick Mahomes NOT found in player list');
+      }
       
       return {
         players: this.players,
@@ -228,16 +311,6 @@ class FantasyApiService {
           this.players = parsedCache.players;
           this.lastFetch = new Date(parsedCache.lastUpdated);
           
-          const defPlayers = this.players.filter(p => p.position === 'DEF');
-          console.log(`Defense players from cache: ${defPlayers.length}`, defPlayers.map(p => p.name));
-          
-          // If cached data doesn't have defense players, add them from mock data
-          if (defPlayers.length === 0) {
-            console.log('No defense players in cache, adding from mock data...');
-            const nonDefPlayers = this.players.filter(p => p.position !== 'DEF');
-            this.players = [...nonDefPlayers, ...baseDefensePlayers];
-          }
-          
           return {
             players: this.players,
             lastUpdated: this.lastFetch
@@ -247,80 +320,60 @@ class FantasyApiService {
         console.warn('Failed to load cached data:', cacheError);
       }
       
-      // Final fallback to mock data when API fails and no cache
-      console.log('API failed and no cache available, falling back to mock data...');
-      this.players = mockPlayers;
-      this.lastFetch = new Date();
-      
-      // Debug: Log defense players from mock data
-      const defPlayers = this.players.filter(p => p.position === 'DEF');
-      console.log(`Defense players from mock data: ${defPlayers.length}`, defPlayers.map(p => p.name));
-      
-      // Cache the mock data for future use
-      try {
-        localStorage.setItem('fantasyPlayers', JSON.stringify({
-          players: this.players,
-          lastUpdated: this.lastFetch
-        }));
-      } catch (e) {
-        console.warn('Failed to cache mock data:', e);
-      }
+      // If everything fails, throw error - no mock data fallback
+      throw new Error('Failed to fetch player data and no cached data available');
+    }
+  }
+
+  private createDefenseTeams(): Player[] {
+    return NFL_DEFENSES.map(defense => {
+      const { stats, projections } = generateDefenseStats(defense.team);
       
       return {
-        players: this.players,
-        lastUpdated: this.lastFetch
+        id: `def_${defense.team}`,
+        name: defense.name,
+        position: 'DEF' as const,
+        team: defense.team,
+        stats,
+        projections,
+        injuryStatus: 'healthy' as const,
+        byeWeek: this.getByeWeek(defense.team)
       };
-    }
+    });
   }
 
   private transformSleeperData(sleeperPlayers: { [key: string]: SleeperPlayer }): Player[] {
     const players: Player[] = [];
     
-    console.log('Starting to transform Sleeper data...');
-    console.log('Total Sleeper players received:', Object.keys(sleeperPlayers).length);
+    console.log('Transforming Sleeper data for offensive players...');
     
     Object.entries(sleeperPlayers).forEach(([playerId, player]) => {
-      // Skip players without valid positions, but log DEF players for debugging
+      // Only process offensive players (QB, RB, WR, TE, K)
       if (!player.position) {
         return;
       }
       
+      // Skip DEF players - we'll add them separately
+      if (player.position === 'DEF') {
+        return;
+      }
+      
       if (!POSITION_MAP[player.position]) {
-        if (player.position === 'DEF') {
-          console.log('Found DEF player but no mapping:', player.full_name, player.team, player.position);
-        }
         return;
       }
 
-      // Special handling for DEF players
-      if (player.position === 'DEF') {
-        console.log('Processing DEF player:', player.full_name, player.team);
-        // Defense teams have different data structure
-        if (!player.team) {
-          console.log('Skipping DEF player due to missing data:', player);
-          return;
-        }
-        
-        // For DEF players, create a name if full_name is missing
-        if (!player.full_name) {
-          player.full_name = `${player.team} Defense`;
-        }
-      } else {
-        // Regular player validation
-        if (!player.team || 
-            !player.active || 
-            player.injury_status === 'Retired' || 
-            player.status === 'Retired' ||
-            player.status === 'Inactive' ||
-            player.status === 'Practice Squad' ||
-            !player.full_name ||
-            player.years_exp === null ||
-            player.years_exp > 15 ||
-            player.team === 'FA' || 
-            player.team === 'UFA') {
-          return;
-        }
+      // Validation for offensive players - be more lenient to include more players
+      if (!player.team || 
+          player.team === 'FA' || 
+          player.team === 'UFA' ||
+          !player.full_name ||
+          player.injury_status === 'Retired' || 
+          player.status === 'Retired') {
+        return;
       }
+      
+      // Include all active players, even if not currently on active roster
+      // This ensures we get players like those on IR, practice squad, etc.
 
       // Generate realistic stats based on player data
       const { stats, projections } = generateRealisticStats(player, player.position);
@@ -336,48 +389,16 @@ class FantasyApiService {
         byeWeek: this.getByeWeek(player.team)
       };
 
-      if (player.position === 'DEF') {
-        console.log('Successfully transformed DEF player:', transformedPlayer);
-      }
-
       players.push(transformedPlayer);
     });
 
-    // Sort by fantasy points (PPR) and take top players by position
+    // Sort by projected fantasy points (PPR)
     players.sort((a, b) => b.projections.projectedPoints.ppr - a.projections.projectedPoints.ppr);
     
-    console.log('Players before position filtering:', players.length);
-    const defPlayersBeforeFilter = players.filter(p => p.position === 'DEF');
-    console.log('DEF players before filtering:', defPlayersBeforeFilter.length, defPlayersBeforeFilter.map(p => p.name));
+    console.log('Transformed offensive players:', players.length);
     
-    // Filter to get reasonable number of fantasy-relevant players per position
-    const positionLimits = {
-      'QB': 40,
-      'RB': 80,
-      'WR': 100,
-      'TE': 40,
-      'K': 32,
-      'DEF': 32
-    };
-
-    const filteredPlayers: Player[] = [];
-    const positionCounts: { [key: string]: number } = {};
-
-    for (const player of players) {
-      const currentCount = positionCounts[player.position] || 0;
-      const limit = positionLimits[player.position as keyof typeof positionLimits] || 50;
-      
-      if (currentCount < limit) {
-        filteredPlayers.push(player);
-        positionCounts[player.position] = currentCount + 1;
-      }
-    }
-
-    console.log('Player counts by position:', positionCounts);
-    const finalDefPlayers = filteredPlayers.filter(p => p.position === 'DEF');
-    console.log('Final DEF players:', finalDefPlayers.length, finalDefPlayers.map(p => p.name));
-    
-    return filteredPlayers;
+    // Return ALL players - no artificial limits
+    return players;
   }
 
   private mapInjuryStatus(status: string): Player['injuryStatus'] {
@@ -408,7 +429,7 @@ class FantasyApiService {
   }
 
   private getByeWeek(team: string): number {
-    // 2024 NFL bye weeks
+    // 2025 NFL bye weeks (using 2024 as template)
     const byeWeeks: { [key: string]: number } = {
       'BUF': 12, 'MIA': 6, 'NE': 14, 'NYJ': 7,
       'BAL': 14, 'CIN': 7, 'CLE': 5, 'PIT': 9,
