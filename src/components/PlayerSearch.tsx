@@ -124,7 +124,7 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
                   key={player.id}
                   className="px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors border-b border-base-300 last:border-b-0"
                   onClick={() => {
-                    setSearchTerm(player.name);
+                    setSearchTerm('');
                   }}
                 >
                   <div className="flex items-center justify-between">
