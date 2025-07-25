@@ -63,7 +63,6 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
                 <div className="w-8 h-8 bg-info/10 rounded flex items-center justify-center">
                   <Users className="w-4 h-4 text-info" />
                 </div>
-                <h3 className="text-lg font-semibold text-base-content">Team 1</h3>
                 <h3 className="text-lg font-semibold text-base-content font-tomorrow">Team 1</h3>
               </div>
               <div className="text-right">
@@ -118,7 +117,6 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
                 <div className="w-8 h-8 bg-success/10 rounded flex items-center justify-center">
                   <Users className="w-4 h-4 text-success" />
                 </div>
-                <h3 className="text-lg font-semibold text-base-content">Team 2</h3>
                 <h3 className="text-lg font-semibold text-base-content font-tomorrow">Team 2</h3>
               </div>
               <div className="text-right">
