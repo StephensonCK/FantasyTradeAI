@@ -105,12 +105,73 @@ export const PlayerSearch: React.FC<PlayerSearchProps> = ({
         </div>
         
         {/* Search Input with Autocomplete */}
-        <AutoComplete
-          suggestions={suggestions}
-          value={searchTerm}
-          onChange={setSearchTerm}
-          placeholder="Search players or teams..."
-        />
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/40 w-5 h-5" />
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Type to search players or teams..."
+            className="input input-bordered w-full pl-10 pr-4"
+            autoComplete="off"
+          />
+          
+          {/* Typeahead Suggestions */}
+          {debouncedSearchTerm && filteredPlayers.length > 0 && (
+            <div className="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded shadow-lg max-h-60 overflow-auto">
+              {filteredPlayers.slice(0, 8).map((player) => (
+                <div
+                  key={player.id}
+                  className="px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors border-b border-base-300 last:border-b-0"
+                  onClick={() => {
+                    setSearchTerm(player.name);
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded overflow-hidden bg-base-200 shadow-sm border border-base-300">
+                        <img
+                          src={`https://a.espncdn.com/i/teamlogos/nfl/500/${player.team.toLowerCase()}.png`}
+                          alt={`${player.team} logo`}
+                          className="w-full h-full object-contain p-1"
+                        />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-base-content">{player.name}</div>
+                        <div className="flex items-center space-x-2 text-sm text-base-content/60">
+                          <span>{player.team}</span>
+                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            player.position === 'QB' ? 'bg-secondary/20 text-secondary' :
+                            player.position === 'RB' ? 'bg-success/20 text-success' :
+                            player.position === 'WR' ? 'bg-info/20 text-info' :
+                            player.position === 'TE' ? 'bg-warning/20 text-warning' :
+                            player.position === 'K' ? 'bg-accent/20 text-accent' :
+                            player.position === 'DEF' ? 'bg-error/20 text-error' :
+                            'bg-base-300 text-base-content'
+                          }`}>
+                            {player.position}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-sm font-bold text-success">
+                        {player.projections.projectedPoints[scoringFormat].toFixed(1)}
+                      </div>
+                      <div className="text-xs text-base-content/50">proj pts</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              
+              {filteredPlayers.length > 8 && (
+                <div className="px-4 py-2 text-center text-sm text-base-content/50 bg-base-200">
+                  {filteredPlayers.length - 8} more players found...
+                </div>
+              )}
+            </div>
+          )}
+        </div>
         
         {/* Filters */}
         {showFilters && (
