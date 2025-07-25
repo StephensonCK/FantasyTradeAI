@@ -218,26 +218,40 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                     <span>Upcoming Schedule & Projections</span>
                   </h4>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {schedule.map((game, index) => (
-                      <div key={index} className="bg-base-100 rounded p-4 border border-base-300 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-sm font-bold text-base-content">Week {game.week}</span>
-                            <span className="text-sm text-base-content/60">{game.opponent}</span>
-                          </div>
-                          <span className={`text-xs px-2 py-1 rounded font-medium ${getDifficultyColor(game.difficulty)}`}>
-                            {game.difficulty}
-                          </span>
-                        </div>
-                        <div className="text-center">
-                          <span className="text-lg font-bold text-success">
-                            {game.projectedPoints.toFixed(1)}
-                          </span>
-                          <p className="text-xs text-base-content/50">Projected Points</p>
-                        </div>
-                      </div>
-                    ))}
+                  <div className="overflow-x-auto">
+                    <table className="table table-zebra w-full">
+                      <thead>
+                        <tr>
+                          <th className="text-base-content font-bold">Week</th>
+                          <th className="text-base-content font-bold">Opponent</th>
+                          <th className="text-base-content font-bold">Difficulty</th>
+                          <th className="text-base-content font-bold text-right">Projected Points</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {schedule.map((game, index) => (
+                          <tr key={index} className="hover:bg-base-200/50">
+                            <td className="font-bold text-base-content">
+                              Week {game.week}
+                            </td>
+                            <td className="text-base-content/80">
+                              {game.opponent}
+                            </td>
+                            <td>
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(game.difficulty)}`}>
+                                {game.difficulty}
+                              </span>
+                            </td>
+                            <td className="text-right">
+                              <span className="text-lg font-bold text-success">
+                                {game.projectedPoints.toFixed(1)}
+                              </span>
+                              <span className="text-xs text-base-content/50 ml-1">pts</span>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                   
                   <div className="mt-4 p-3 bg-info/10 rounded border border-info/20">
