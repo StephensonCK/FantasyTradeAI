@@ -142,11 +142,11 @@ export const TradeAnalysis: React.FC<TradeAnalysisProps> = ({ trade }) => {
           
           <div className="space-y-3">
             {analysis.recommendations.map((recommendation, index) => (
-              <div key={index} className="flex items-start space-x-3 p-4 bg-warning/10 border border-warning/20 rounded">
-                <div className="w-6 h-6 bg-warning text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+              <div key={index} className="alert alert-warning flex items-start space-x-3">
+                <div className="w-6 h-6 bg-warning text-warning-content rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
                   {index + 1}
                 </div>
-                <p className="text-warning-content">{recommendation}</p>
+                <p className="flex-1">{recommendation}</p>
               </div>
             ))}
           </div>
