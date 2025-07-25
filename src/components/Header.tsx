@@ -42,30 +42,6 @@ export const Header: React.FC<HeaderProps> = ({
             />
           </div>
         </div>
-        
-        {/* Data Status Bar */}
-        {lastUpdated && (
-          <div className="bg-success/10 border border-success/30 rounded p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                <span className="text-success text-sm font-medium">
-                  Player data updated: {lastUpdated.toLocaleString()}
-                </span>
-                <span className="text-success/80 text-sm">
-                  ({playersCount} players loaded)
-                </span>
-              </div>
-              <button
-                onClick={onRefresh}
-                className="flex items-center space-x-1 text-success hover:text-success/70 transition-colors"
-              >
-                <RefreshCw className="w-4 h-4" />
-                <span className="text-sm">Refresh</span>
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </header>
   );

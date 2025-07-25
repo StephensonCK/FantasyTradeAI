@@ -7,6 +7,7 @@ import { TradeAnalysis } from './components/TradeAnalysis';
 import { TradeHistory } from './components/TradeHistory';
 import { PlayerComparison } from './components/PlayerComparison';
 import { ScoringFormatSelector } from './components/ScoringFormatSelector';
+import { DataStatus } from './components/DataStatus';
 import { Footer } from './components/Footer';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorMessage } from './components/ErrorMessage';
@@ -184,6 +185,12 @@ function App() {
           </div>
         )}
       </main>
+      
+      <DataStatus 
+        lastUpdated={lastUpdated}
+        playersCount={players.length}
+        onRefresh={refetch}
+      />
       
       <Footer />
     </div>
