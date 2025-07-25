@@ -4,44 +4,44 @@
 
 @layer base {
   html {
-    font-size: 18px; /* Increased base font size from default 16px */
+    font-size: 16px; /* 12pt equivalent base font size */
   }
   
   body {
     font-family: 'Noto Sans', sans-serif;
-    font-size: 1rem; /* Now equals 18px */
+    font-size: 1rem; /* Now equals 16px */
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Tomorrow', sans-serif;
   }
   
-  /* Ensure minimum text size is 14pt (0.875rem = ~15.75px with 18px base) */
+  /* Font size scaling from 16px base (12pt equivalent) */
   .text-xs {
-    font-size: 0.875rem !important; /* 15.75px - minimum size */
+    font-size: 0.75rem !important; /* 12px */
   }
   
   .text-sm {
-    font-size: 1rem !important; /* 18px */
+    font-size: 0.875rem !important; /* 14px */
   }
   
   .text-base {
-    font-size: 1.125rem !important; /* 20.25px */
+    font-size: 1rem !important; /* 16px */
   }
   
   .text-lg {
-    font-size: 1.25rem !important; /* 22.5px */
+    font-size: 1.125rem !important; /* 18px */
   }
   
   .text-xl {
-    font-size: 1.5rem !important; /* 27px */
+    font-size: 1.25rem !important; /* 20px */
   }
   
   .text-2xl {
-    font-size: 1.75rem !important; /* 31.5px */
+    font-size: 1.5rem !important; /* 24px */
   }
   
   .text-3xl {
-    font-size: 2rem !important; /* 36px */
+    font-size: 1.875rem !important; /* 30px */
   }
 }

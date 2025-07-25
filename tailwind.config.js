@@ -8,15 +8,15 @@ export default {
         'noto': ['Noto Sans', 'sans-serif'],
       },
       fontSize: {
-        'xs': ['0.875rem', { lineHeight: '1.25' }], /* 15.75px */
-        'sm': ['1rem', { lineHeight: '1.5' }], /* 18px */
-        'base': ['1.125rem', { lineHeight: '1.5' }], /* 20.25px */
-        'lg': ['1.25rem', { lineHeight: '1.5' }], /* 22.5px */
-        'xl': ['1.5rem', { lineHeight: '1.5' }], /* 27px */
-        '2xl': ['1.75rem', { lineHeight: '1.4' }], /* 31.5px */
-        '3xl': ['2rem', { lineHeight: '1.3' }], /* 36px */
-        '4xl': ['2.25rem', { lineHeight: '1.2' }], /* 40.5px */
-        '5xl': ['2.5rem', { lineHeight: '1.1' }], /* 45px */
+        'xs': ['0.75rem', { lineHeight: '1.25' }], /* 12px */
+        'sm': ['0.875rem', { lineHeight: '1.5' }], /* 14px */
+        'base': ['1rem', { lineHeight: '1.5' }], /* 16px */
+        'lg': ['1.125rem', { lineHeight: '1.5' }], /* 18px */
+        'xl': ['1.25rem', { lineHeight: '1.5' }], /* 20px */
+        '2xl': ['1.5rem', { lineHeight: '1.4' }], /* 24px */
+        '3xl': ['1.875rem', { lineHeight: '1.3' }], /* 30px */
+        '4xl': ['2.25rem', { lineHeight: '1.2' }], /* 36px */
+        '5xl': ['2.5rem', { lineHeight: '1.1' }], /* 40px */
       },
       colors: {
         primary: '#135bf9',
