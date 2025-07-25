@@ -56,135 +56,45 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
     }
   };
 
+  const getInjuryStyles = () => {
+    return {};
+  };
+
   const renderPlayerImage = (size: 'sm' | 'lg' = 'lg') => {
     const sizeClasses = size === 'sm' ? 'w-12 h-12' : 'w-16 h-16';
     const teamLogoUrl = `https://a.espncdn.com/i/teamlogos/nfl/500/${player.team.toLowerCase()}.png`;
     
-    {/* Season Status Banner */}
-    {player.stats.gamesPlayed === 0 && (
-      <div className="mb-4 p-3 bg-info/10 border border-info/20 rounded">
-        <div className="flex items-center space-x-2">
-          <Calendar className="w-4 h-4 text-info" />
-          <span className="text-sm font-semibold text-info">2025 Season Preview</span>
-        </div>
-        <p className="text-xs text-info/80 mt-1">
-          Stats shown are projections for the upcoming season
-        </p>
+    return (
+      <div className={`${sizeClasses} rounded-full bg-base-200 flex items-center justify-center overflow-hidden`}>
+        <img 
+          src={teamLogoUrl} 
+          alt={`${player.team} logo`}
+          className="w-full h-full object-cover"
+        />
       </div>
-    )}
-    
-    {/* Stats Sections */}
-    <div className="space-y-4 mb-4">
-      {/* Current Season Stats */}
-      {player.stats.gamesPlayed > 0 ? (
-        <div>
-          <h4 className="text-sm font-bold text-base-content mb-3 flex items-center space-x-2">
-            <Activity className="w-4 h-4 text-success" />
-            <span>2025 Season Stats</span>
-          </h4>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <span className="text-xs font-semibold text-success/70">Total Points</span>
-              </div>
-              <span className="text-sm font-bold text-success">
-                {player.stats.fantasyPoints.ppr.toFixed(1)}
-              </span>
-            </div>
-            
-            <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <span className="text-xs font-semibold text-success/70">Avg/Game</span>
-              </div>
-              <span className="text-sm font-bold text-success">
-                {player.stats.avgPointsPerGame.ppr.toFixed(1)}
-              </span>
-            </div>
-            
-            <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <span className="text-xs font-semibold text-success/70">Games</span>
-              </div>
-              <span className="text-sm font-bold text-success">
-                {player.stats.gamesPlayed}
-              </span>
-            </div>
-            
-            <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
-              <div className="flex items-center justify-center space-x-1 mb-1">
-                <span className="text-xs font-semibold text-success/70">Rank</span>
-              </div>
-              <span className="text-sm font-bold text-success">
-                #{player.stats.positionRank}
-              </span>
-            </div>
-          </div>
-        </div>
-      ) : null}
-      
-      {/* Projected Stats */}
-      <div>
-        <h4 className="text-sm font-bold text-base-content mb-3 flex items-center space-x-2">
-          <TrendingUp className="w-4 h-4 text-info" />
-          <span>{player.stats.gamesPlayed > 0 ? 'Rest of Season' : '2025 Season'} Projections</span>
-        </h4>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <span className="text-xs font-semibold text-info/70">Proj Points</span>
-            </div>
-            <span className="text-sm font-bold text-info">
-              {player.projections.projectedPoints.ppr.toFixed(1)}
-            </span>
-          </div>
-          
-          <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <span className="text-xs font-semibold text-info/70">Games Left</span>
-            </div>
-            <span className="text-sm font-bold text-info">
-              {player.projections.remainingGames}
-            </span>
-          </div>
-          
-          <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <span className="text-xs font-semibold text-info/70">Confidence</span>
-            </div>
-            <span className="text-sm font-bold text-info">
-              {player.projections.confidenceScore}%
-            </span>
-          </div>
-          
-          <div className="bg-warning/10 rounded p-3 text-center shadow-sm border border-warning/20">
-            <div className="flex items-center justify-center space-x-1 mb-1">
-              <Calendar className="w-3 h-3 text-warning" />
-              <span className="text-xs font-semibold text-warning/70">Bye Week</span>
-            </div>
-            <span className="text-sm font-bold text-warning">
-              {player.byeWeek}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+    );
+  };
 
   if (variant === 'trade') {
-    <div className="flex items-center justify-between text-xs mb-3 bg-base-200 rounded p-2">      
+    return (
+      <div 
+        className="rounded p-4 transition-all duration-300 cursor-pointer group hover:shadow-lg hover:scale-[1.01] border border-base-300 bg-base-100"
         style={getInjuryStyles()}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             {renderPlayerImage('sm')}
-      
-      <div className="text-xs font-medium text-base-content/60">
-        <span className="font-medium">Position Rank: </span>
-        <span className="font-bold text-info">#{player.stats.positionRank}</span>
+            <div>
+              <h3 className="font-bold text-base text-base-content group-hover:text-primary transition-colors font-tomorrow">
+                {player.name}
+              </h3>
+              <div className="flex items-center space-x-1.5">
+                <span className="text-xs font-semibold text-base-content/70 bg-base-200 px-1.5 py-0.5 rounded font-noto">
+                  {player.team}
                 </span>
-    </div>
-    
-    {/* Action Buttons */}
-    <div className="flex items-center justify-end">      
+                <span className={`text-xs px-2 py-0.5 rounded-md font-bold ${getPositionColor()}`}>
+                  {player.position}
+                </span>
               </div>
             </div>
           </div>
@@ -217,6 +127,19 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
       }`}
       style={getInjuryStyles()}
     >
+      {/* Season Status Banner */}
+      {player.stats.gamesPlayed === 0 && (
+        <div className="mb-4 p-3 bg-info/10 border border-info/20 rounded">
+          <div className="flex items-center space-x-2">
+            <Calendar className="w-4 h-4 text-info" />
+            <span className="text-sm font-semibold text-info">2025 Season Preview</span>
+          </div>
+          <p className="text-xs text-info/80 mt-1">
+            Stats shown are projections for the upcoming season
+          </p>
+        </div>
+      )}
+      
       {/* Main Player Info */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-2">
@@ -259,11 +182,115 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
         <div className="text-right bg-success/10 rounded p-3 shadow-sm">
           <div className="flex items-center space-x-1">
             {getTrendIcon()}
-            <span className="text-lg font-bold text-success">
-              {player.stats.fantasyPoints.ppr.toFixed(1)}
-            </span>
+            {player.stats.gamesPlayed > 0 ? (
+              <span className="text-lg font-bold text-success">
+                {player.stats.fantasyPoints.ppr.toFixed(1)}
+              </span>
+            ) : (
+              <span className="text-lg font-bold text-info">
+                {player.projections.projectedPoints.ppr.toFixed(1)}
+              </span>
+            )}
           </div>
-          <p className="text-xs font-semibold text-success/70 mt-0.5">PPR Points</p>
+          <p className={`text-xs font-semibold mt-0.5 ${player.stats.gamesPlayed > 0 ? 'text-success/70' : 'text-info/70'}`}>
+            {player.stats.gamesPlayed > 0 ? 'Season PPR' : 'Proj PPR'}
+          </p>
+        </div>
+      </div>
+      
+      {/* Stats Sections */}
+      <div className="space-y-4 mb-4">
+        {/* Current Season Stats */}
+        {player.stats.gamesPlayed > 0 ? (
+          <div>
+            <h4 className="text-sm font-bold text-base-content mb-3 flex items-center space-x-2">
+              <Activity className="w-4 h-4 text-success" />
+              <span>2025 Season Stats</span>
+            </h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
+                <div className="flex items-center justify-center space-x-1 mb-1">
+                  <span className="text-xs font-semibold text-success/70">Total Points</span>
+                </div>
+                <span className="text-sm font-bold text-success">
+                  {player.stats.fantasyPoints.ppr.toFixed(1)}
+                </span>
+              </div>
+              
+              <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
+                <div className="flex items-center justify-center space-x-1 mb-1">
+                  <span className="text-xs font-semibold text-success/70">Avg/Game</span>
+                </div>
+                <span className="text-sm font-bold text-success">
+                  {player.stats.avgPointsPerGame.ppr.toFixed(1)}
+                </span>
+              </div>
+              
+              <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
+                <div className="flex items-center justify-center space-x-1 mb-1">
+                  <span className="text-xs font-semibold text-success/70">Games</span>
+                </div>
+                <span className="text-sm font-bold text-success">
+                  {player.stats.gamesPlayed}
+                </span>
+              </div>
+              
+              <div className="bg-success/10 rounded p-3 text-center shadow-sm border border-success/20">
+                <div className="flex items-center justify-center space-x-1 mb-1">
+                  <span className="text-xs font-semibold text-success/70">Rank</span>
+                </div>
+                <span className="text-sm font-bold text-success">
+                  #{player.stats.positionRank}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        
+        {/* Projected Stats */}
+        <div>
+          <h4 className="text-sm font-bold text-base-content mb-3 flex items-center space-x-2">
+            <TrendingUp className="w-4 h-4 text-info" />
+            <span>{player.stats.gamesPlayed > 0 ? 'Rest of Season' : '2025 Season'} Projections</span>
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
+              <div className="flex items-center justify-center space-x-1 mb-1">
+                <span className="text-xs font-semibold text-info/70">Proj Points</span>
+              </div>
+              <span className="text-sm font-bold text-info">
+                {player.projections.projectedPoints.ppr.toFixed(1)}
+              </span>
+            </div>
+            
+            <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
+              <div className="flex items-center justify-center space-x-1 mb-1">
+                <span className="text-xs font-semibold text-info/70">Games Left</span>
+              </div>
+              <span className="text-sm font-bold text-info">
+                {player.projections.remainingGames}
+              </span>
+            </div>
+            
+            <div className="bg-info/10 rounded p-3 text-center shadow-sm border border-info/20">
+              <div className="flex items-center justify-center space-x-1 mb-1">
+                <span className="text-xs font-semibold text-info/70">Confidence</span>
+              </div>
+              <span className="text-sm font-bold text-info">
+                {player.projections.confidenceScore}%
+              </span>
+            </div>
+            
+            <div className="bg-warning/10 rounded p-3 text-center shadow-sm border border-warning/20">
+              <div className="flex items-center justify-center space-x-1 mb-1">
+                <Calendar className="w-3 h-3 text-warning" />
+                <span className="text-xs font-semibold text-warning/70">Bye Week</span>
+              </div>
+              <span className="text-sm font-bold text-warning">
+                {player.byeWeek}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -323,6 +350,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
         </div>
       </div>
       
+      <div className="text-xs font-medium text-base-content/60">
+        <span className="font-medium">Position Rank: </span>
+        <span className="font-bold text-info">#{player.stats.positionRank}</span>
+      </div>
+      
       {/* Action Buttons */}
       <div className="flex items-center justify-between">
         <div className="text-xs font-medium text-base-content/60 bg-info/10 rounded px-2 py-1">
@@ -350,19 +382,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
                 className="btn btn-success btn-xs text-xs flex items-center space-x-1 transition-all duration-200 font-semibold"
               >
                 <Plus className="w-3 h-3" />
-          {player.stats.gamesPlayed > 0 ? (
-            <span className="text-lg font-bold text-success">
-              {player.stats.fantasyPoints.ppr.toFixed(1)}
-            </span>
-          ) : (
-            <span className="text-lg font-bold text-info">
-              {player.projections.projectedPoints.ppr.toFixed(1)}
-            </span>
+                <span>Team 2</span>
+              </button>
+            </>
           )}
-          )}
-        <p className="text-xs font-semibold mt-0.5 {player.stats.gamesPlayed > 0 ? 'text-success/70' : 'text-info/70'}">
-          {player.stats.gamesPlayed > 0 ? 'Season PPR' : 'Proj PPR'}
-        </p>
+        </div>
       </div>
     </div>
   );
