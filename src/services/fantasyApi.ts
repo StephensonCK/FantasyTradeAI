@@ -159,11 +159,20 @@ class FantasyApiService {
     if (!forceRefresh && this.lastFetch && 
         Date.now() - this.lastFetch.getTime() < this.CACHE_DURATION &&
         this.players.length > 0) {
+      console.log('Using cached data with', this.players.length, 'players');
+      const defPlayers = this.players.filter(p => p.position === 'DEF');
+      console.log('Cached DEF players:', defPlayers.length, defPlayers.map(p => p.name));
       return {
         players: this.players,
         lastUpdated: this.lastFetch
       };
     }
+
+    // Always start with mock data to ensure we have defense players
+    console.log('Loading mock data as base...');
+    const { mockPlayers } = await import('../data/mockPlayers');
+    let baseDefensePlayers = mockPlayers.filter(p => p.position === 'DEF');
+    console.log('Mock defense players loaded:', baseDefensePlayers.length, baseDefensePlayers.map(p => p.name));
 
     try {
       console.log('Fetching fresh player data from Sleeper API...');
@@ -174,7 +183,17 @@ class FantasyApiService {
       const sleeperPlayers: { [key: string]: SleeperPlayer } = response.data;
       
       // Transform Sleeper data to our Player format
-      this.players = this.transformSleeperData(sleeperPlayers);
+      const apiPlayers = this.transformSleeperData(sleeperPlayers);
+      
+      // Always include mock defense players since Sleeper API often doesn't have them
+      const apiDefPlayers = apiPlayers.filter(p => p.position === 'DEF');
+      console.log('API defense players found:', apiDefPlayers.length);
+      
+      // Combine API players with mock defense players (remove duplicates by team)
+      const nonDefApiPlayers = apiPlayers.filter(p => p.position !== 'DEF');
+      const allDefPlayers = apiDefPlayers.length > 0 ? apiDefPlayers : baseDefensePlayers;
+      
+      this.players = [...nonDefApiPlayers, ...allDefPlayers];
       this.lastFetch = new Date();
       
       // Store in localStorage for offline capability
@@ -212,6 +231,13 @@ class FantasyApiService {
           const defPlayers = this.players.filter(p => p.position === 'DEF');
           console.log(`Defense players from cache: ${defPlayers.length}`, defPlayers.map(p => p.name));
           
+          // If cached data doesn't have defense players, add them from mock data
+          if (defPlayers.length === 0) {
+            console.log('No defense players in cache, adding from mock data...');
+            const nonDefPlayers = this.players.filter(p => p.position !== 'DEF');
+            this.players = [...nonDefPlayers, ...baseDefensePlayers];
+          }
+          
           return {
             players: this.players,
             lastUpdated: this.lastFetch
@@ -223,7 +249,6 @@ class FantasyApiService {
       
       // Final fallback to mock data when API fails and no cache
       console.log('API failed and no cache available, falling back to mock data...');
-      const { mockPlayers } = await import('../data/mockPlayers');
       this.players = mockPlayers;
       this.lastFetch = new Date();
       
@@ -255,10 +280,14 @@ class FantasyApiService {
     console.log('Total Sleeper players received:', Object.keys(sleeperPlayers).length);
     
     Object.entries(sleeperPlayers).forEach(([playerId, player]) => {
-      // Only include players with valid positions
-      if (!player.position || !POSITION_MAP[player.position]) {
+      // Skip players without valid positions, but log DEF players for debugging
+      if (!player.position) {
+        return;
+      }
+      
+      if (!POSITION_MAP[player.position]) {
         if (player.position === 'DEF') {
-          console.log('Found DEF player but no mapping:', player);
+          console.log('Found DEF player but no mapping:', player.full_name, player.team, player.position);
         }
         return;
       }
@@ -267,9 +296,14 @@ class FantasyApiService {
       if (player.position === 'DEF') {
         console.log('Processing DEF player:', player.full_name, player.team);
         // Defense teams have different data structure
-        if (!player.team || !player.full_name) {
+        if (!player.team) {
           console.log('Skipping DEF player due to missing data:', player);
           return;
+        }
+        
+        // For DEF players, create a name if full_name is missing
+        if (!player.full_name) {
+          player.full_name = `${player.team} Defense`;
         }
       } else {
         // Regular player validation
