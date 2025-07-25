@@ -74,7 +74,7 @@ export const analyzeTradeAI = (trade: Trade): TradeAnalysis => {
   else grade = 'F';
   
   // Generate recommendations
-  const recommendations = generateRecommendations(user1Players, user2Players, difference, winner);
+  const recommendations = generateRecommendations(user1Players, user2Players, difference, winner, fairnessScore, grade);
   
   // Calculate confidence based on various factors
   const confidence = Math.min(1, 0.7 + (fairnessScore / 1000) + (Math.min(user1Players.length, user2Players.length) / 10));
@@ -97,23 +97,43 @@ const generateRecommendations = (
   user1Players: Player[], 
   user2Players: Player[], 
   difference: number,
-  winner: 'user1' | 'user2' | 'even'
+  winner: 'user1' | 'user2' | 'even',
+  fairnessScore: number,
+  grade: 'A' | 'B' | 'C' | 'D' | 'F'
 ): string[] => {
   const recommendations: string[] = [];
   
-  if (winner === 'even') {
+  // Base recommendations on fairness score and grade rather than just winner
+  if (fairnessScore >= 85 || grade === 'A') {
+    recommendations.push("This is an excellent, well-balanced trade that benefits both teams fairly.");
+    recommendations.push("Both teams are getting good value - this trade should be accepted.");
+    recommendations.push("Consider the players' playoff schedules and bye weeks before finalizing.");
+  } else if (fairnessScore >= 75 || grade === 'B') {
+    recommendations.push("This is a solid trade with good value for both sides.");
+    if (winner !== 'even') {
+      const advantagedTeam = winner === 'user1' ? 'Team 1' : 'Team 2';
+      recommendations.push(`${advantagedTeam} gets slightly better value, but the trade is still fair.`);
+    }
+    recommendations.push("Consider roster needs and player schedules when making your decision.");
+  } else if (fairnessScore >= 60 || grade === 'C') {
     recommendations.push("This is a well-balanced trade that benefits both teams fairly.");
     recommendations.push("Consider the players' playoff schedules and bye weeks before finalizing.");
-  } else {
+    if (winner !== 'even') {
+      const losingTeam = winner === 'user1' ? 'Team 2' : 'Team 1';
+      recommendations.push(`${losingTeam} might want to request a small additional piece to balance the trade.`);
+    }
+  } else if (fairnessScore >= 40 || grade === 'D') {
     const losingTeam = winner === 'user1' ? 'Team 2' : 'Team 1';
-    const winningTeam = winner === 'user1' ? 'Team 1' : 'Team 2';
     
     recommendations.push(`${losingTeam} should request additional value to balance this trade.`);
-    recommendations.push(`Consider adding a bench player or future draft pick to favor ${losingTeam}.`);
+    recommendations.push(`Consider adding a bench player or future draft pick to even out the value.`);
+  } else {
+    // Grade F or very low fairness score
+    const losingTeam = winner === 'user1' ? 'Team 2' : 'Team 1';
     
-    if (Math.abs(difference) > 15) {
-      recommendations.push("This trade heavily favors one side and may be considered unfair.");
-    }
+    recommendations.push("This trade heavily favors one side and should be reconsidered.");
+    recommendations.push(`${losingTeam} is giving up significantly more value than they're receiving.`);
+    recommendations.push("Consider restructuring the trade or adding more players to balance the value.");
   }
   
   // Position-specific recommendations
