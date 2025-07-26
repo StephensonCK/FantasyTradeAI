@@ -13,9 +13,6 @@ export const useTheme = () => {
     
     // Use standard DaisyUI theme names
     html.setAttribute('data-theme', theme);
-    
-    console.log('DaisyUI theme set to:', theme);
-    console.log('HTML data-theme attribute:', html.getAttribute('data-theme'));
   }, [theme]);
 
   const changeTheme = (newTheme: Theme) => {

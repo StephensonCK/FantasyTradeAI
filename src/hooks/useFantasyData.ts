@@ -22,20 +22,12 @@ export const useFantasyData = (): UseFantasyDataReturn => {
       setLoading(true);
       setError(null);
       
-      console.log('useFantasyData: Starting to fetch data...');
       const response = await fantasyApiService.fetchPlayers(forceRefresh);
-      console.log('useFantasyData: Received response with', response.players.length, 'players');
-      
-      const defPlayers = response.players.filter(p => p.position === 'DEF');
-      console.log('useFantasyData: DEF players in response:', defPlayers.length, defPlayers.map(p => p.name));
       
       setPlayers(response.players);
       setLastUpdated(response.lastUpdated);
-      
-      console.log('useFantasyData: State updated with players');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch player data');
-      console.error('Error fetching fantasy data:', err);
     } finally {
       setLoading(false);
     }

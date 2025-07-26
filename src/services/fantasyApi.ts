@@ -230,7 +230,6 @@ class FantasyApiService {
     if (!forceRefresh && this.lastFetch && 
         Date.now() - this.lastFetch.getTime() < this.CACHE_DURATION &&
         this.players.length > 0) {
-      console.log('Using cached data with', this.players.length, 'players');
       return {
         players: this.players,
         lastUpdated: this.lastFetch
@@ -238,21 +237,17 @@ class FantasyApiService {
     }
 
     try {
-      console.log('Fetching ALL active NFL players from Sleeper API...');
       const response = await axios.get(NFL_PLAYERS_URL, {
         timeout: 10000 // 10 second timeout
       });
       
       const sleeperPlayers: { [key: string]: SleeperPlayer } = response.data;
-      console.log('Total players received from Sleeper API:', Object.keys(sleeperPlayers).length);
       
       // Transform Sleeper data to our Player format
       const apiPlayers = this.transformSleeperData(sleeperPlayers);
-      console.log('Players after transformation:', apiPlayers.length);
       
       // Add all NFL defenses since Sleeper API doesn't include them
       const defenseTeams = this.createDefenseTeams();
-      console.log('Adding NFL defense teams:', defenseTeams.length);
       
       // Combine offensive players with defense teams
       this.players = [...apiPlayers, ...defenseTeams];
@@ -265,49 +260,19 @@ class FantasyApiService {
           lastUpdated: this.lastFetch
         }));
       } catch (e) {
-        console.warn('Failed to cache player data in localStorage:', e);
+        // Failed to cache player data in localStorage
       }
 
-      console.log(`Successfully loaded ${this.players.length} total players (${apiPlayers.length} offensive + ${defenseTeams.length} defenses)`);
-      
-      // Log player counts by position
-      const defPlayers = this.players.filter(p => p.position === 'DEF');
-      const qbPlayers = this.players.filter(p => p.position === 'QB');
-      const rbPlayers = this.players.filter(p => p.position === 'RB');
-      const wrPlayers = this.players.filter(p => p.position === 'WR');
-      const tePlayers = this.players.filter(p => p.position === 'TE');
-      const kPlayers = this.players.filter(p => p.position === 'K');
-      
-      console.log('Player counts by position:', {
-        QB: qbPlayers.length,
-        RB: rbPlayers.length,
-        WR: wrPlayers.length,
-        TE: tePlayers.length,
-        K: kPlayers.length,
-        DEF: defPlayers.length
-      });
-      
-      // Check for Patrick Mahomes specifically
-      const mahomes = this.players.find(p => p.name.toLowerCase().includes('mahomes'));
-      if (mahomes) {
-        console.log('✅ Patrick Mahomes found:', mahomes.name, mahomes.team, mahomes.position);
-      } else {
-        console.log('❌ Patrick Mahomes NOT found in player list');
-      }
-      
       return {
         players: this.players,
         lastUpdated: this.lastFetch
       };
     } catch (error) {
-      console.error('Error fetching player data from Sleeper API:', error);
-      
       // Try to load from localStorage first
       try {
         const cached = localStorage.getItem('fantasyPlayers');
         if (cached) {
           const parsedCache = JSON.parse(cached);
-          console.log('Loading cached player data from localStorage...');
           this.players = parsedCache.players;
           this.lastFetch = new Date(parsedCache.lastUpdated);
           
@@ -317,7 +282,7 @@ class FantasyApiService {
           };
         }
       } catch (cacheError) {
-        console.warn('Failed to load cached data:', cacheError);
+        // Failed to load cached data
       }
       
       // If everything fails, throw error - no mock data fallback
@@ -344,8 +309,6 @@ class FantasyApiService {
 
   private transformSleeperData(sleeperPlayers: { [key: string]: SleeperPlayer }): Player[] {
     const players: Player[] = [];
-    
-    console.log('Transforming Sleeper data for offensive players...');
     
     Object.entries(sleeperPlayers).forEach(([playerId, player]) => {
       // Only process offensive players (QB, RB, WR, TE, K)
@@ -394,8 +357,6 @@ class FantasyApiService {
 
     // Sort by projected fantasy points (PPR)
     players.sort((a, b) => b.projections.projectedPoints.ppr - a.projections.projectedPoints.ppr);
-    
-    console.log('Transformed offensive players:', players.length);
     
     // Return ALL players - no artificial limits
     return players;
@@ -449,7 +410,6 @@ class FantasyApiService {
     this.players = [];
     this.lastFetch = null;
     localStorage.removeItem('fantasyPlayers');
-    console.log('Player cache cleared');
   }
 }
 
