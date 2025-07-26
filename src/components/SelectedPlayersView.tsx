@@ -93,9 +93,16 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
             <div>
               <h2 className="text-xl font-bold text-base-content font-tomorrow">Selected Players</h2>
               <p className="text-base-content/60 text-sm font-noto">Detailed player analysis and projections</p>
+              {/* Mobile player count - below title */}
+              <div className="sm:hidden mt-2">
+                <span className="inline-flex items-center px-2 py-1 bg-primary/10 text-primary rounded-full text-xs font-medium">
+                  {selectedPlayers.length} player{selectedPlayers.length !== 1 ? 's' : ''} selected
+                </span>
+              </div>
             </div>
           </div>
-          <div className="text-sm text-base-content/60">
+          {/* Desktop player count - right side */}
+          <div className="hidden sm:block text-sm text-base-content/60">
             {selectedPlayers.length} player{selectedPlayers.length !== 1 ? 's' : ''} selected
           </div>
         </div>
@@ -161,27 +168,42 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
               </div>
               
               {/* Mobile buttons - Always visible on mobile */}
-              <div className="md:hidden flex items-center justify-center space-x-3 mb-6 p-3 bg-base-200 rounded">
+              <div className="md:hidden mb-6">
+                <div className="bg-gradient-to-r from-blue-50 to-red-50 dark:from-blue-900/20 dark:to-red-900/20 rounded-lg p-4 border border-base-300">
+                  <div className="text-center mb-3">
+                    <h4 className="text-sm font-semibold text-base-content font-tomorrow">Assign to Team</h4>
+                    <p className="text-xs text-base-content/60 mt-1">Choose which team gets this player</p>
+                  </div>
+                  <div className="flex items-center space-x-3">
                 <button
                   onClick={() => onAssignToTeam(player, 'user1')}
-                  className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 flex-1"
+                      className="btn btn-sm flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 flex-1 shadow-md"
                 >
-                  <Users className="w-4 h-4" />
-                  <span>Team 1</span>
+                      <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                        <Users className="w-3 h-3" />
+                      </div>
+                      <span className="font-medium">Team 1</span>
                 </button>
                 <button
                   onClick={() => onAssignToTeam(player, 'user2')}
-                  className="btn btn-sm flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 flex-1"
+                      className="btn btn-sm flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 flex-1 shadow-md"
                 >
-                  <Users className="w-4 h-4" />
-                  <span>Team 2</span>
+                      <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                        <Users className="w-3 h-3" />
+                      </div>
+                      <span className="font-medium">Team 2</span>
                 </button>
+                  </div>
+                  <div className="flex justify-center mt-3">
                 <button
                   onClick={() => onRemovePlayer(player.id)}
-                  className="btn btn-ghost btn-sm text-error hover:bg-error/10"
+                      className="btn btn-ghost btn-xs text-error hover:bg-error/10 flex items-center space-x-1"
                 >
                   <X className="w-4 h-4" />
+                      <span className="text-xs">Remove</span>
                 </button>
+                  </div>
+                </div>
               </div>
 
               {/* Detailed Stats Grid */}
