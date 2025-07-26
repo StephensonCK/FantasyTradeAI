@@ -169,15 +169,15 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
               
               {/* Mobile buttons - Always visible on mobile */}
               <div className="md:hidden mb-6">
-                <div className="bg-gradient-to-r from-blue-50 to-red-50 dark:from-blue-900/20 dark:to-red-900/20 rounded-lg p-4 border border-base-300">
+                <div className="rounded-lg p-4 border border-base-300">
                   <div className="text-center mb-3">
                     <h4 className="text-sm font-semibold text-base-content font-tomorrow">Assign to Team</h4>
                     <p className="text-xs text-base-content/60 mt-1">Choose which team gets this player</p>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="space-y-3">
                 <button
                   onClick={() => onAssignToTeam(player, 'user1')}
-                      className="btn btn-sm flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 flex-1 shadow-md"
+                      className="btn btn-sm flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 w-full shadow-md"
                 >
                       <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
                         <Users className="w-3 h-3" />
@@ -186,7 +186,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                 </button>
                 <button
                   onClick={() => onAssignToTeam(player, 'user2')}
-                      className="btn btn-sm flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 flex-1 shadow-md"
+                      className="btn btn-sm flex items-center justify-center space-x-2 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 w-full shadow-md"
                 >
                       <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
                         <Users className="w-3 h-3" />
@@ -194,7 +194,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                       <span className="font-medium">Team 2</span>
                 </button>
                   </div>
-                  <div className="flex justify-center mt-3">
+                  <div className="flex justify-center">
                 <button
                   onClick={() => onRemovePlayer(player.id)}
                       className="btn btn-ghost btn-xs text-error hover:bg-error/10 flex items-center space-x-1"
