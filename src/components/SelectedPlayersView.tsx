@@ -255,7 +255,8 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                     <span>Upcoming Schedule & Projections</span>
                   </h4>
                   
-                  <div className="overflow-x-auto">
+                  {/* Desktop Table View */}
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="table table-zebra w-full">
                       <thead>
                         <tr>
@@ -296,6 +297,36 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                         ))}
                       </tbody>
                     </table>
+                  </div>
+
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-3">
+                    {schedule.map((game, index) => (
+                      <div key={index} className="bg-base-100 border border-base-300 rounded p-4 shadow-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="flex items-center space-x-3">
+                            <div className="bg-primary/10 rounded px-2 py-1">
+                              <span className="text-sm font-bold text-primary">Week {game.week}</span>
+                            </div>
+                            <span className="font-medium text-base-content">{game.opponent}</span>
+                          </div>
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(game.difficulty)}`}>
+                            {game.difficulty}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="text-center bg-primary/5 rounded p-2">
+                            <div className="text-lg font-bold text-primary">0.0</div>
+                            <div className="text-xs text-base-content/60">Actual Points</div>
+                          </div>
+                          <div className="text-center bg-success/5 rounded p-2">
+                            <div className="text-lg font-bold text-success">{game.projectedPoints.toFixed(1)}</div>
+                            <div className="text-xs text-base-content/60">Projected Points</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                   
                   <div className="mt-4 p-3 bg-info/10 rounded border border-info/20">
