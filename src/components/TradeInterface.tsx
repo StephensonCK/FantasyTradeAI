@@ -68,15 +68,13 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
             <BarChart3 className="w-5 h-5" />
             <span className="text-lg">Analyze Trade</span>
           </button>
-          <div className="flex justify-center">
-            <button
-              onClick={onClearTrade}
-              className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
-            >
-              <Trash2 className="w-4 h-4" />
-              <span className="text-sm">Clear</span>
-            </button>
-          </div>
+          <button
+            onClick={onClearTrade}
+            className="btn btn-ghost btn-lg w-full flex items-center justify-center space-x-2 text-base-content/60 hover:text-error"
+          >
+            <Trash2 className="w-5 h-5" />
+            <span className="text-lg">Clear</span>
+          </button>
         </div>
       </div>
 
