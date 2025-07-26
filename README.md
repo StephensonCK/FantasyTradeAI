@@ -380,7 +380,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Courtney Stephenson**
-- GitHub: [@yourusername](https://github.com/yourusername)
+- GitHub: [@StephensonCK](https://github.com/StephensonCK)
 - Website: [https://fantasytradeai.com](https://fantasytradeai.com)
 
 ## 🙏 Acknowledgments
@@ -400,7 +400,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Discussions** - Use GitHub Discussions for questions
 
 ### Contact
-- **Email** - support@fantasytradeai.com
 - **Website** - [https://fantasytradeai.com](https://fantasytradeai.com)
 
 ---
