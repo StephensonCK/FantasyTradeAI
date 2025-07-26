@@ -30,28 +30,51 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
       <div className="p-6 border-b border-base-300">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-base-content font-tomorrow">Trade Setup</h2>
-          <div className="flex space-x-1 sm:space-x-2">
+          {/* Desktop buttons */}
+          <div className="hidden sm:flex space-x-2">
             <button
               onClick={onClearTrade}
-              className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error min-w-0 flex-shrink-0"
+              className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
             >
               <Trash2 className="w-4 h-4" />
-              <span className="text-sm hidden xs:inline">Clear</span>
+              <span className="text-sm">Clear</span>
             </button>
             <button
               onClick={onAnalyzeTrade}
               disabled={!canAnalyze}
-              className={`btn flex items-center space-x-1 sm:space-x-2 font-medium transition-all min-w-0 flex-shrink-0 ${
+              className={`btn flex items-center space-x-2 font-medium transition-all ${
                 canAnalyze
                   ? 'btn-success'
                   : 'btn-disabled'
               }`}
             >
               <BarChart3 className="w-4 h-4" />
-              <span className="hidden xs:inline">Analyze Trade</span>
-              <span className="xs:hidden">Analyze</span>
+              <span>Analyze Trade</span>
             </button>
           </div>
+        </div>
+        
+        {/* Mobile buttons - moved below title */}
+        <div className="sm:hidden flex space-x-2 mb-4">
+          <button
+            onClick={onClearTrade}
+            className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error flex-1"
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="text-sm">Clear</span>
+          </button>
+          <button
+            onClick={onAnalyzeTrade}
+            disabled={!canAnalyze}
+            className={`btn flex items-center space-x-2 font-medium transition-all flex-1 ${
+              canAnalyze
+                ? 'btn-success'
+                : 'btn-disabled'
+            }`}
+          >
+            <BarChart3 className="w-4 h-4" />
+            <span>Analyze Trade</span>
+          </button>
         </div>
       </div>
 

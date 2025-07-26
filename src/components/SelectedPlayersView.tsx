@@ -126,30 +126,53 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                   </div>
                 </div>
                 
-                <div className="flex items-center space-x-2">
+                {/* Desktop buttons */}
+                <div className="hidden sm:flex items-center space-x-2">
                   <button
                     onClick={() => onAssignToTeam(player, 'user1')}
-                    className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 min-w-0 flex-shrink-0"
+                    className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600"
                   >
                     <Users className="w-4 h-4" />
-                    <span className="hidden xs:inline">Team 1</span>
-                    <span className="xs:hidden">T1</span>
+                    <span>Team 1</span>
                   </button>
                   <button
                     onClick={() => onAssignToTeam(player, 'user2')}
-                    className="btn btn-sm flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 min-w-0 flex-shrink-0"
+                    className="btn btn-sm flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600"
                   >
                     <Users className="w-4 h-4" />
-                    <span className="hidden xs:inline">Team 2</span>
-                    <span className="xs:hidden">T2</span>
+                    <span>Team 2</span>
                   </button>
                   <button
                     onClick={() => onRemovePlayer(player.id)}
-                    className="btn btn-ghost btn-sm text-error hover:bg-error/10 min-w-0 flex-shrink-0"
+                    className="btn btn-ghost btn-sm text-error hover:bg-error/10"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
+              </div>
+              
+              {/* Mobile buttons - moved below header */}
+              <div className="sm:hidden flex items-center justify-center space-x-3 mb-6 p-3 bg-base-200 rounded">
+                <button
+                  onClick={() => onAssignToTeam(player, 'user1')}
+                  className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 flex-1"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Team 1</span>
+                </button>
+                <button
+                  onClick={() => onAssignToTeam(player, 'user2')}
+                  className="btn btn-sm flex items-center space-x-1 bg-red-500 hover:bg-red-600 text-white border-red-500 hover:border-red-600 flex-1"
+                >
+                  <Users className="w-4 h-4" />
+                  <span>Team 2</span>
+                </button>
+                <button
+                  onClick={() => onRemovePlayer(player.id)}
+                  className="btn btn-ghost btn-sm text-error hover:bg-error/10"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
 
               {/* Detailed Stats Grid */}
