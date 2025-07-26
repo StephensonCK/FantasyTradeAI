@@ -272,10 +272,11 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onSelect, onRemo
                 e.stopPropagation();
                 onSelect(player);
               }}
-              className="btn btn-primary btn-xs text-xs flex items-center space-x-1 transition-all duration-200 font-semibold"
+              className="btn btn-primary btn-xs text-xs flex items-center space-x-1 transition-all duration-200 font-semibold min-w-0 flex-shrink-0"
             >
               <Plus className="w-3 h-3" />
-              <span>View Details</span>
+              <span className="hidden xs:inline">View Details</span>
+              <span className="xs:hidden">View</span>
             </button>
           )}
         </div>
