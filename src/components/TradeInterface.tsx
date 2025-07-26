@@ -77,7 +77,6 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
               <span className="text-sm">Clear</span>
             </button>
           </div>
-          </button>
         </div>
       </div>
 
