@@ -125,18 +125,18 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                       <span className="text-sm font-semibold text-base-content/70 bg-base-200 px-2 py-1 rounded">
                         {player.team}
                       </span>
-                      <span className={`text-sm px-3 py-1 rounded-md font-bold border ${getPositionColor(player.position)}`}>
+                      <span className={`text-xs px-2 py-1 rounded-md font-bold border ${getPositionColor(player.position)}`}>
                         {player.position}
                       </span>
-                      <span className={`text-sm px-2 py-1 rounded font-medium ${getInjuryStatusColor(player.injuryStatus)}`}>
+                      <span className={`text-xs px-2 py-1 rounded font-medium ${getInjuryStatusColor(player.injuryStatus)}`}>
                         {player.injuryStatus.toUpperCase()}
                       </span>
                     </div>
                   </div>
                 </div>
                 
-                {/* Desktop buttons */}
-                <div className="hidden sm:flex items-center space-x-2">
+                {/* Desktop buttons - Hidden on mobile */}
+                <div className="hidden md:flex items-center space-x-2">
                   <button
                     onClick={() => onAssignToTeam(player, 'user1')}
                     className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600"
@@ -160,8 +160,8 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                 </div>
               </div>
               
-              {/* Mobile buttons - moved below header */}
-              <div className="sm:hidden flex items-center justify-center space-x-3 mb-6 p-3 bg-base-200 rounded">
+              {/* Mobile buttons - Always visible on mobile */}
+              <div className="md:hidden flex items-center justify-center space-x-3 mb-6 p-3 bg-base-200 rounded">
                 <button
                   onClick={() => onAssignToTeam(player, 'user1')}
                   className="btn btn-sm flex items-center space-x-1 bg-blue-500 hover:bg-blue-600 text-white border-blue-500 hover:border-blue-600 flex-1"
@@ -185,7 +185,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
               </div>
 
               {/* Detailed Stats Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+              <div className="hidden md:grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
                 <div className="bg-base-100 rounded p-4 text-center shadow-sm border border-base-300">
                   <div className="flex items-center justify-center space-x-1 mb-2">
                     <Target className="w-4 h-4 text-info" />
