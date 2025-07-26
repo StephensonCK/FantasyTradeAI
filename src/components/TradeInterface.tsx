@@ -31,7 +31,7 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-bold text-base-content font-tomorrow">Trade Setup</h2>
           {/* Desktop buttons */}
-          <div className="hidden sm:flex space-x-2">
+          <div className="hidden md:flex space-x-2">
             <button
               onClick={onClearTrade}
               className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
@@ -42,9 +42,9 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
             <button
               onClick={onAnalyzeTrade}
               disabled={!canAnalyze}
-              className={`btn flex items-center space-x-2 font-medium transition-all ${
+              className={`btn btn-lg flex items-center space-x-2 font-bold transition-all ${
                 canAnalyze
-                  ? 'btn-success'
+                  ? 'btn-success text-white'
                   : 'btn-disabled'
               }`}
             >
@@ -55,25 +55,28 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
         </div>
         
         {/* Mobile buttons - moved below title */}
-        <div className="sm:hidden flex space-x-2 mb-4">
-          <button
-            onClick={onClearTrade}
-            className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error flex-1"
-          >
-            <Trash2 className="w-4 h-4" />
-            <span className="text-sm">Clear</span>
-          </button>
+        <div className="md:hidden space-y-3 mb-4">
           <button
             onClick={onAnalyzeTrade}
             disabled={!canAnalyze}
-            className={`btn flex items-center space-x-2 font-medium transition-all flex-1 ${
+            className={`btn btn-lg w-full flex items-center justify-center space-x-3 font-bold transition-all shadow-lg ${
               canAnalyze
-                ? 'btn-success'
+                ? 'btn-success text-white hover:btn-success hover:scale-105'
                 : 'btn-disabled'
             }`}
           >
-            <BarChart3 className="w-4 h-4" />
-            <span>Analyze Trade</span>
+            <BarChart3 className="w-5 h-5" />
+            <span className="text-lg">Analyze Trade</span>
+          </button>
+          <div className="flex justify-center">
+            <button
+              onClick={onClearTrade}
+              className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="text-sm">Clear</span>
+            </button>
+          </div>
           </button>
         </div>
       </div>
