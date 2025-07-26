@@ -34,10 +34,10 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
           <div className="hidden md:flex space-x-2">
             <button
               onClick={onClearTrade}
-              className="btn btn-ghost btn-sm flex items-center space-x-1 text-base-content/60 hover:text-error"
+              className="btn btn-ghost btn-lg flex items-center justify-center space-x-2 text-base-content/60 hover:text-error"
             >
-              <Trash2 className="w-4 h-4" />
-              <span className="text-sm">Clear</span>
+              <Trash2 className="w-5 h-5" />
+              <span className="text-lg">Clear</span>
             </button>
             <button
               onClick={onAnalyzeTrade}
@@ -48,7 +48,7 @@ export const TradeInterface: React.FC<TradeInterfaceProps> = ({
                   : 'btn-disabled'
               }`}
             >
-              <BarChart3 className="w-4 h-4" />
+              <BarChart3 className="w-5 h-5" />
               <span>Analyze Trade</span>
             </button>
           </div>
