@@ -19,7 +19,7 @@ export const Header: React.FC<HeaderProps> = ({
   return (
     <header className="bg-base-100 shadow-sm border-b border-base-300 transition-colors">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-4 sm:mb-4">
           <div className="flex items-center space-x-3">
             <div className="p-4 rounded shadow-lg bg-primary">
               <img 
@@ -36,12 +36,20 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
           </div>
           
-          <div className="flex items-center space-x-4">
+          <div className="hidden sm:flex items-center space-x-4">
             <ScoringFormatSelector 
               selectedFormat={scoringFormat}
               onFormatChange={onScoringFormatChange}
             />
           </div>
+        </div>
+        
+        {/* Mobile scoring selector - below title */}
+        <div className="sm:hidden flex justify-center mb-4">
+          <ScoringFormatSelector 
+            selectedFormat={scoringFormat}
+            onFormatChange={onScoringFormatChange}
+          />
         </div>
       </div>
     </header>
