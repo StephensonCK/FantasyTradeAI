@@ -32,7 +32,7 @@ export const TradeHistory: React.FC<TradeHistoryProps> = ({ trades, onSelectTrad
     <div className="bg-base-100 rounded shadow-lg border border-base-300 transition-colors">
       <div className="p-6 border-b border-base-300">
         <div className="flex items-center space-x-3">
-          <div className="bg-neutral p-3 rounded">
+          <div className="bg-neutral p-3 rounded hidden sm:block">
             <Clock className="w-5 h-5 text-neutral-content" />
           </div>
           <div className="flex-1">

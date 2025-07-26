@@ -87,7 +87,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
       <div className="p-6 border-b border-base-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-primary p-3 rounded">
+            <div className="bg-primary p-3 rounded hidden sm:block">
               <Star className="w-5 h-5 text-primary-content" />
             </div>
             <div>
