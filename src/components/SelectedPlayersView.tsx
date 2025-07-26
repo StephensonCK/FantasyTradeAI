@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, Calendar, TrendingUp, Target, Activity, Clock, X, Users } from 'lucide-react';
+import { Star, Calendar, TrendingUp, Target, Activity, Clock, X, Users, ChevronDown, ChevronUp } from 'lucide-react';
 import { Player } from '../types';
 
 interface SelectedPlayersViewProps {
@@ -15,6 +15,15 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
   onAssignToTeam,
   scoringFormat
 }) => {
+  const [expandedSchedules, setExpandedSchedules] = React.useState<{ [key: string]: boolean }>({});
+
+  const toggleSchedule = (playerId: string) => {
+    setExpandedSchedules(prev => ({
+      ...prev,
+      [playerId]: !prev[playerId]
+    }));
+  };
+
   const getPositionColor = (position: string) => {
     switch (position) {
       case 'QB': return 'bg-secondary/20 text-secondary border-secondary/30';
@@ -250,10 +259,33 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
               {/* Schedule */}
               {schedule.length > 0 && (
                 <div>
-                  <h4 className="text-lg font-semibold text-base-content mb-4 flex items-center space-x-2 font-tomorrow">
-                    <Calendar className="w-5 h-5" />
-                    <span>Upcoming Schedule & Projections</span>
-                  </h4>
+                  {/* Desktop - Always expanded */}
+                  <div className="hidden md:block">
+                    <h4 className="text-lg font-semibold text-base-content mb-4 flex items-center space-x-2 font-tomorrow">
+                      <Calendar className="w-5 h-5" />
+                      <span>Upcoming Schedule & Projections</span>
+                    </h4>
+                  </div>
+
+                  {/* Mobile - Collapsible header */}
+                  <div className="md:hidden">
+                    <button
+                      onClick={() => toggleSchedule(player.id)}
+                      className="w-full flex items-center justify-between p-3 bg-base-200 rounded hover:bg-base-300 transition-colors mb-4"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-5 h-5" />
+                        <span className="text-lg font-semibold text-base-content font-tomorrow">
+                          Upcoming Schedule & Projections
+                        </span>
+                      </div>
+                      {expandedSchedules[player.id] ? (
+                        <ChevronUp className="w-5 h-5 text-base-content/60" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-base-content/60" />
+                      )}
+                    </button>
+                  </div>
                   
                   {/* Desktop Table View */}
                   <div className="hidden md:block overflow-x-auto">
@@ -300,7 +332,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                   </div>
 
                   {/* Mobile Card View */}
-                  <div className="md:hidden space-y-3">
+                  <div className={`md:hidden space-y-3 ${expandedSchedules[player.id] ? 'block' : 'hidden'}`}>
                     {schedule.map((game, index) => (
                       <div key={index} className="bg-base-100 border border-base-300 rounded p-4 shadow-sm">
                         <div className="flex items-center justify-between mb-3">
@@ -329,7 +361,7 @@ export const SelectedPlayersView: React.FC<SelectedPlayersViewProps> = ({
                     ))}
                   </div>
                   
-                  <div className="mt-4 p-3 bg-info/10 rounded border border-info/20">
+                 <div className={`mt-4 p-3 bg-info/10 rounded border border-info/20 ${expandedSchedules[player.id] === false ? 'md:block hidden' : 'block'}`}>
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-info font-medium">Total Projected Points:</span>
                       <span className="text-info font-bold">
