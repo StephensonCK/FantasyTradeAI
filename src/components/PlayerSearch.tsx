@@ -1,302 +1,124 @@
-import React, { useState, useMemo } from 'react';
-import { Search, Filter, X, Users, RefreshCw } from 'lucide-react';
-import { Player } from '../types';
-import { PlayerCard } from './PlayerCard';
-import { AutoComplete } from './AutoComplete';
-import { useDebounce } from '../hooks/useDebounce';
+import { useId, useMemo, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
+import { ValuedPlayer } from '../types/value';
+import { PositionChip } from './PlayerChip';
 
-interface PlayerSearchProps {
-  players: Player[];
-  onPlayerSelect: (player: Player) => void;
-  scoringFormat: 'standard' | 'halfPpr' | 'ppr';
+interface Props {
+  label: string;
+  pool: ValuedPlayer[];
+  excludeIds: ReadonlySet<string>;
+  disabled?: boolean;
+  onPick: (player: ValuedPlayer) => void;
 }
 
-export const PlayerSearch: React.FC<PlayerSearchProps> = ({ 
-  players, 
-  onPlayerSelect, 
-  scoringFormat 
-}) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showTypeahead, setShowTypeahead] = useState(false);
-  const [selectedPosition, setSelectedPosition] = useState<string>('all');
-  const [selectedTeam, setSelectedTeam] = useState<string>('all');
-  const [selectedInjuryStatus, setSelectedInjuryStatus] = useState<string>('all');
-  const [showFilters, setShowFilters] = useState(false);
-  const [sortBy, setSortBy] = useState<'points' | 'rank' | 'name'>('points');
+const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, '');
+const MAX_RESULTS = 8;
 
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
+export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Props) => {
+  const [query, setQuery] = useState('');
+  const [open, setOpen] = useState(false);
+  const [active, setActive] = useState(0);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const listId = useId();
 
-  const positions = ['all', 'QB', 'RB', 'WR', 'TE', 'K', 'DEF'];
-  const teams = useMemo(() => {
-    const uniqueTeams = [...new Set(players.map(p => p.team))].sort();
-    return ['all', ...uniqueTeams];
-  }, [players]);
-  
-  const injuryStatuses = ['all', 'healthy', 'questionable', 'doubtful', 'out', 'ir'];
+  const results = useMemo(() => {
+    const q = normalize(query.trim());
+    const available = pool.filter(p => !excludeIds.has(p.id));
+    const matches = q
+      ? available.filter(p => normalize(p.name).includes(q) || p.position.toLowerCase() === q)
+      : available;
+    return matches.slice(0, MAX_RESULTS);
+  }, [pool, excludeIds, query]);
 
-  // Generate autocomplete suggestions
-  const suggestions = useMemo(() => {
-    const playerNames = players.map(p => p.name);
-    const teamNames = [...new Set(players.map(p => p.team))];
-    return [...playerNames, ...teamNames];
-  }, [players]);
-
-  const filteredPlayers = useMemo(() => {
-    let filtered = players.filter(player => {
-      const matchesSearch = player.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
-                          player.team.toLowerCase().includes(debouncedSearchTerm.toLowerCase());
-      const matchesPosition = selectedPosition === 'all' || player.position === selectedPosition;
-      const matchesTeam = selectedTeam === 'all' || player.team === selectedTeam;
-      const matchesInjury = selectedInjuryStatus === 'all' || player.injuryStatus === selectedInjuryStatus;
-      
-      return matchesSearch && matchesPosition && matchesTeam && matchesInjury;
-    });
-
-    // Sort players
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'points':
-          return b.stats.fantasyPoints[scoringFormat] - a.stats.fantasyPoints[scoringFormat];
-        case 'rank':
-          return a.stats.positionRank - b.stats.positionRank;
-        case 'name':
-          return a.name.localeCompare(b.name);
-        default:
-          return 0;
-      }
-    });
-
-    return filtered;
-  }, [players, debouncedSearchTerm, selectedPosition, selectedTeam, selectedInjuryStatus, sortBy, scoringFormat]);
-
-  const clearFilters = () => {
-    setSearchTerm('');
-    setSelectedPosition('all');
-    setSelectedTeam('all');
-    setSelectedInjuryStatus('all');
-    setSortBy('points');
+  const pick = (player: ValuedPlayer) => {
+    onPick(player);
+    setQuery('');
+    setActive(0);
+    inputRef.current?.focus();
   };
 
-  const hasActiveFilters = selectedPosition !== 'all' || selectedTeam !== 'all' || 
-                          selectedInjuryStatus !== 'all' || searchTerm !== '';
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setOpen(true);
+      setActive(i => Math.min(i + 1, results.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setActive(i => Math.max(i - 1, 0));
+    } else if (e.key === 'Enter' && open && results[active]) {
+      e.preventDefault();
+      pick(results[active]);
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
 
   return (
-    <div className="bg-base-100 rounded shadow-lg border border-base-300 transition-colors">
-      <div className="p-6 border-b border-base-300">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-base-content font-tomorrow">Player Search</h2>
-          <div className="flex items-center space-x-2">
-            {hasActiveFilters && (
-              <span className="bg-success/10 text-success text-xs px-2 py-1 rounded-full">
-                {filteredPlayers.length} results
-              </span>
-            )}
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center space-x-1 px-3 py-2 rounded-lg transition-all ${
-                showFilters 
-                  ? 'bg-primary/10 text-primary' 
-                  : 'text-base-content/60 hover:text-primary hover:bg-primary/10'
+    <div className="relative">
+      <label className="sr-only" htmlFor={`${listId}-input`}>
+        {label}
+      </label>
+      <Search
+        aria-hidden
+        className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted"
+        strokeWidth={1.75}
+      />
+      <input
+        id={`${listId}-input`}
+        ref={inputRef}
+        type="text"
+        role="combobox"
+        aria-expanded={open}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        autoComplete="off"
+        spellCheck={false}
+        disabled={disabled}
+        value={query}
+        placeholder={label}
+        onChange={e => {
+          setQuery(e.target.value);
+          setActive(0);
+          setOpen(true);
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onKeyDown={onKeyDown}
+        className="h-11 w-full rounded-lg border border-line bg-surface pl-9 pr-3 text-sm text-ink placeholder:text-muted disabled:opacity-50"
+      />
+      {open && results.length > 0 && (
+        <ul
+          id={listId}
+          role="listbox"
+          className="absolute inset-x-0 top-full z-30 mt-1 max-h-80 overflow-y-auto rounded-lg border border-line bg-surface p-1 shadow-lg shadow-ink/10"
+        >
+          {results.map((p, i) => (
+            <li
+              key={p.id}
+              role="option"
+              aria-selected={i === active}
+              // mouseDown (not click) so the input keeps focus and onBlur doesn't close first
+              onMouseDown={e => {
+                e.preventDefault();
+                pick(p);
+              }}
+              onMouseEnter={() => setActive(i)}
+              className={`flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 ${
+                i === active ? 'bg-sunken' : ''
               }`}
             >
-              <Filter className="w-4 h-4" />
-              <span className="text-sm">Filters</span>
-            </button>
-          </div>
+              <PositionChip position={p.position} />
+              <span className="min-w-0 flex-1 truncate text-sm font-medium">{p.name}</span>
+              <span className="text-xs text-muted">{p.team ?? 'FA'}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {open && query && results.length === 0 && (
+        <div className="absolute inset-x-0 top-full z-30 mt-1 rounded-lg border border-line bg-surface px-3 py-3 text-sm text-muted shadow-lg shadow-ink/10">
+          No player matches &ldquo;{query}&rdquo;.
         </div>
-        
-        {/* Search Input with Autocomplete */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-base-content/40 w-5 h-5" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onFocus={() => setShowTypeahead(true)}
-            onBlur={() => setTimeout(() => setShowTypeahead(false), 150)}
-            placeholder="Type to search players or teams..."
-            className="input input-bordered w-full pl-10 pr-4"
-            autoComplete="off"
-          />
-          
-          {/* Typeahead Suggestions */}
-          {showTypeahead && debouncedSearchTerm && filteredPlayers.length > 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-base-100 border border-base-300 rounded shadow-lg max-h-60 overflow-auto">
-              {filteredPlayers.slice(0, 8).map((player) => (
-                <div
-                  key={player.id}
-                  className="px-4 py-3 cursor-pointer hover:bg-base-200 transition-colors border-b border-base-300 last:border-b-0"
-                  onMouseDown={(e) => e.preventDefault()} // Prevent blur from firing before click
-                  onClick={() => {
-                    setSearchTerm(player.name);
-                    setShowTypeahead(false);
-                    onPlayerSelect(player);
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 rounded overflow-hidden bg-base-200 shadow-sm border border-base-300">
-                        <img
-                          src={`https://a.espncdn.com/i/teamlogos/nfl/500/${player.team.toLowerCase()}.png`}
-                          alt={`${player.team} logo`}
-                          className="w-full h-full object-contain p-1"
-                        />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-base-content">{player.name}</div>
-                        <div className="flex items-center space-x-2 text-sm text-base-content/60">
-                          <span>{player.team}</span>
-                          <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                            player.position === 'QB' ? 'bg-secondary/20 text-secondary' :
-                            player.position === 'RB' ? 'bg-success/20 text-success' :
-                            player.position === 'WR' ? 'bg-info/20 text-info' :
-                            player.position === 'TE' ? 'bg-warning/20 text-warning' :
-                            player.position === 'K' ? 'bg-accent/20 text-accent' :
-                            player.position === 'DEF' ? 'bg-error/20 text-error' :
-                            'bg-base-300 text-base-content'
-                          }`}>
-                            {player.position}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-sm font-bold text-success">
-                        {player.projections.projectedPoints[scoringFormat].toFixed(1)}
-                      </div>
-                      <div className="text-xs text-base-content/50">proj pts</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              
-              {filteredPlayers.length > 8 && (
-                <div className="px-4 py-2 text-center text-sm text-base-content/50 bg-base-200">
-                  {filteredPlayers.length - 8} more players found...
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-        
-        {/* Filters - Only show when user is actively searching */}
-        {debouncedSearchTerm.trim() && filteredPlayers.length > 0 && (
-          <div className="mt-4 space-y-4 p-4 bg-base-200 rounded">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-base-content mb-2">Position</label>
-                <select
-                  value={selectedPosition}
-                  onChange={(e) => setSelectedPosition(e.target.value)}
-                  className="select select-bordered w-full"
-                >
-                  {positions.map(pos => (
-                    <option key={pos} value={pos}>
-                      {pos === 'all' ? 'All Positions' : pos}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-base-content mb-2">Team</label>
-                <select
-                  value={selectedTeam}
-                  onChange={(e) => setSelectedTeam(e.target.value)}
-                  className="select select-bordered w-full"
-                >
-                  {teams.map(team => (
-                    <option key={team} value={team}>
-                      {team === 'all' ? 'All Teams' : team}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-base-content mb-2">Injury Status</label>
-                <select
-                  value={selectedInjuryStatus}
-                  onChange={(e) => setSelectedInjuryStatus(e.target.value)}
-                  className="select select-bordered w-full"
-                >
-                  {injuryStatuses.map(status => (
-                    <option key={status} value={status}>
-                      {status === 'all' ? 'All Statuses' : status.charAt(0).toUpperCase() + status.slice(1)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-base-content mb-2">Sort By</label>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as 'points' | 'rank' | 'name')}
-                  className="select select-bordered w-full"
-                >
-                  <option value="points">Fantasy Points</option>
-                  <option value="rank">Position Rank</option>
-                  <option value="name">Name (A-Z)</option>
-                </select>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between">
-              <button
-                onClick={clearFilters}
-                className="flex items-center space-x-1 text-base-content/60 hover:text-error transition-colors"
-              >
-                <X className="w-4 h-4" />
-                <span className="text-sm">Clear All Filters</span>
-              </button>
-              
-              <span className="text-sm text-base-content/50">
-                {filteredPlayers.length} of {players.length} players
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-      
-      {/* Player List */}
-      <div className="max-h-96 overflow-y-auto">
-        {debouncedSearchTerm.trim() && filteredPlayers.length === 0 ? (
-          <div className="p-8 text-center text-base-content/50">
-            <Users className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
-            <p>No players found matching your criteria</p>
-            <button 
-              onClick={clearFilters}
-              className="text-primary hover:text-primary/80 text-sm mt-2 underline"
-            >
-              Clear filters to see all players
-            </button>
-          </div>
-        ) : debouncedSearchTerm.trim() ? (
-          <div className="p-4 space-y-2">
-            {filteredPlayers.map(player => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                onSelect={(player) => onPlayerSelect(player)}
-                variant="search"
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="p-8 text-center text-base-content/50">
-            <Search className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
-            <p>Start typing to search for players</p>
-            <p className="text-sm mt-1">Search by player name or team</p>
-          </div>
-        )}
-      </div>
-      
-      <div className="p-4 bg-base-200 text-center text-sm text-base-content/60 rounded-b">
-        {debouncedSearchTerm.trim() ? `Showing ${filteredPlayers.length} of ${players.length} players` : `${players.length} players available`}
-      </div>
+      )}
     </div>
   );
 };

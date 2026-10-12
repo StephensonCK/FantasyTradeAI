@@ -2,46 +2,101 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Shape rule: controls and panels are 8px (rounded-lg), position chips are 4px. */
+
+:root {
+  --bg: 244 245 247;
+  --surface: 255 255 255;
+  --sunken: 236 238 241;
+  --ink: 20 22 26;
+  --muted: 91 97 107;
+  --line: 222 226 231;
+  --accent: 36 71 245;
+  --accent-ink: 255 255 255;
+  --win: 22 128 70;
+  --lose: 188 40 34;
+  --qb: 184 50 128;
+  --rb: 15 118 110;
+  --wr: 180 83 9;
+  --te: 77 124 15;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: 14 16 19;
+    --surface: 22 25 30;
+    --sunken: 30 34 40;
+    --ink: 236 238 241;
+    --muted: 154 161 171;
+    --line: 42 47 56;
+    --accent: 127 151 255;
+    --accent-ink: 11 15 31;
+    --win: 82 199 127;
+    --lose: 255 122 112;
+    --qb: 244 114 182;
+    --rb: 45 212 191;
+    --wr: 251 191 36;
+    --te: 163 230 53;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: 14 16 19;
+  --surface: 22 25 30;
+  --sunken: 30 34 40;
+  --ink: 236 238 241;
+  --muted: 154 161 171;
+  --line: 42 47 56;
+  --accent: 127 151 255;
+  --accent-ink: 11 15 31;
+  --win: 82 199 127;
+  --lose: 255 122 112;
+  --qb: 244 114 182;
+  --rb: 45 212 191;
+  --wr: 251 191 36;
+  --te: 163 230 53;
+  color-scheme: dark;
+}
+
 @layer base {
-  html {
-    font-size: 16px; /* 12pt equivalent base font size */
-  }
-  
   body {
-    font-family: 'Noto Sans', sans-serif;
-    font-size: 1rem; /* Now equals 16px */
+    @apply bg-bg font-sans text-ink antialiased;
+    font-feature-settings: 'tnum' 1;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Tomorrow', sans-serif;
+
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-accent;
   }
-  
-  /* Font size scaling from 16px base (12pt equivalent) */
-  .text-xs {
-    font-size: 0.75rem !important; /* 12px */
+
+  button {
+    @apply transition-colors duration-150 active:scale-[0.98];
   }
-  
-  .text-sm {
-    font-size: 0.875rem !important; /* 14px */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
   }
-  
-  .text-base {
-    font-size: 1rem !important; /* 16px */
+}
+
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
   }
-  
-  .text-lg {
-    font-size: 1.125rem !important; /* 18px */
-  }
-  
-  .text-xl {
-    font-size: 1.25rem !important; /* 20px */
-  }
-  
-  .text-2xl {
-    font-size: 1.5rem !important; /* 24px */
-  }
-  
-  .text-3xl {
-    font-size: 1.875rem !important; /* 30px */
-  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    100deg,
+    rgb(var(--sunken)) 30%,
+    rgb(var(--line)) 50%,
+    rgb(var(--sunken)) 70%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
 }

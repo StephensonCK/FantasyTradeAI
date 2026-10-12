@@ -1,43 +1,31 @@
 /** @type {import('tailwindcss').Config} */
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src/**/*.{ts,tsx}'],
   theme: {
     extend: {
-      screens: {
-        'xs': '475px',
-      },
       fontFamily: {
-        'tomorrow': ['Tomorrow', 'sans-serif'],
-        'noto': ['Noto Sans', 'sans-serif'],
-      },
-      fontSize: {
-        'xs': ['0.75rem', { lineHeight: '1.25' }], /* 12px */
-        'sm': ['0.875rem', { lineHeight: '1.5' }], /* 14px */
-        'base': ['1rem', { lineHeight: '1.5' }], /* 16px */
-        'lg': ['1.125rem', { lineHeight: '1.5' }], /* 18px */
-        'xl': ['1.25rem', { lineHeight: '1.5' }], /* 20px */
-        '2xl': ['1.5rem', { lineHeight: '1.4' }], /* 24px */
-        '3xl': ['1.875rem', { lineHeight: '1.3' }], /* 30px */
-        '4xl': ['2.25rem', { lineHeight: '1.2' }], /* 36px */
-        '5xl': ['2.5rem', { lineHeight: '1.1' }], /* 40px */
+        sans: ['"Geist Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"Geist Mono Variable"', 'ui-monospace', 'monospace'],
       },
       colors: {
-        primary: '#135bf9',
-      },
-      borderRadius: {
-        DEFAULT: '0.25rem',
+        bg: token('bg'),
+        surface: token('surface'),
+        sunken: token('sunken'),
+        ink: token('ink'),
+        muted: token('muted'),
+        line: token('line'),
+        accent: token('accent'),
+        'accent-ink': token('accent-ink'),
+        win: token('win'),
+        lose: token('lose'),
+        qb: token('qb'),
+        rb: token('rb'),
+        wr: token('wr'),
+        te: token('te'),
       },
     },
   },
-  plugins: [require('daisyui')],
-  daisyui: {
-    themes: ['light', 'dark'], // Use standard light/dark themes
-    darkTheme: 'dark',
-    base: true,
-    styled: true,
-    utils: true,
-    prefix: '',
-    logs: false,
-    themeRoot: ':root',
-  },
+  plugins: [],
 };
