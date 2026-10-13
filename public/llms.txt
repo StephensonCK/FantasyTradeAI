@@ -1,0 +1,25 @@
+# Fantasy Trade AI
+
+> A free fantasy football trade analyzer for redraft leagues. Add the players on each side of a trade and get a plain-language verdict on whether it is fair, based on real market values from FantasyCalc.
+
+Fantasy Trade AI runs entirely in the browser. There are no accounts, and no trade data is sent to a server. Settings and the current trade are saved in the visitor's own browser storage.
+
+## What it does
+
+- Compares two sides of a trade: the players you get and the players you give.
+- Values players for your league settings: Standard, Half PPR or PPR scoring, 1 QB or Superflex, and league sizes from 8 to 16 teams.
+- Returns one of five verdicts: fair trade, slightly or clearly in your favor, slightly or clearly against you, with a balance gauge.
+- Suggests players who would bring a lopsided trade closer to even, and lets you add them in one click.
+- Covers QB, RB, WR and TE in redraft formats. Dynasty values, draft picks, kickers and defenses are not included.
+
+## How the verdict works
+
+- Each player has a market trade value from FantasyCalc for the chosen league settings.
+- Values on each side are added up, with extra players counting a little less (10% per additional player, down to a 50% floor), because a team can only start so many players.
+- Sides within 5% of each other are called a fair trade. The depth adjustment is a rule of thumb, not a fitted model.
+
+## Links
+
+- [Fantasy Trade AI](https://fantasytradeai.com/): the trade analyzer
+- [FantasyCalc](https://fantasycalc.com/): source of the player market values
+- [Source code](https://github.com/StephensonCK/FantasyTradeAI): the project repository

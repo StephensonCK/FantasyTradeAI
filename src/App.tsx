@@ -109,7 +109,7 @@ function App() {
       <section className="hero" aria-labelledby="hero-title">
         <div className="hero-copy">
           <h1 id="hero-title">MAKE YOUR<br /><span>NEXT BIG PLAY.</span></h1>
-          <p>Put the trade on the board. Compare player values.<br className="desktop-break" /> Find the move that moves your team forward.</p>
+          <p>Free fantasy football trade analyzer for redraft leagues.<br className="desktop-break" /> Compare player values and see if the trade is fair.</p>
           <a className="hero-link" href="#lineups">Build your trade <ArrowUpRight size={19} aria-hidden="true" /></a>
         </div>
         <div className="playbook" aria-hidden="true">
