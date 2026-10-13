@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
 import { ValuedPlayer } from '../types/value';
 import { PositionChip } from './PlayerChip';
@@ -30,9 +30,14 @@ export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Prop
     return matches.slice(0, MAX_RESULTS);
   }, [pool, excludeIds, query]);
 
+  useEffect(() => {
+    if (open) document.getElementById(`${listId}-option-${active}`)?.scrollIntoView({ block: 'nearest' });
+  }, [active, open, listId]);
+
   const pick = (player: ValuedPlayer) => {
     onPick(player);
     setQuery('');
+    setOpen(false);
     setActive(0);
     inputRef.current?.focus();
   };
@@ -41,7 +46,7 @@ export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Prop
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       setOpen(true);
-      setActive(i => Math.min(i + 1, results.length - 1));
+      setActive(i => Math.max(0, Math.min(i + 1, results.length - 1)));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setActive(i => Math.max(i - 1, 0));
@@ -69,7 +74,8 @@ export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Prop
         type="text"
         role="combobox"
         aria-expanded={open}
-        aria-controls={listId}
+        aria-controls={open && results.length ? listId : undefined}
+        aria-activedescendant={open && results[active] ? `${listId}-option-${active}` : undefined}
         aria-autocomplete="list"
         autoComplete="off"
         spellCheck={false}
@@ -90,18 +96,20 @@ export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Prop
         <ul
           id={listId}
           role="listbox"
+          aria-label={`${label}: matching players`}
           className="absolute inset-x-0 top-full z-30 mt-1 max-h-80 overflow-y-auto rounded-lg border border-line bg-surface p-1 shadow-lg shadow-ink/10"
         >
           {results.map((p, i) => (
             <li
               key={p.id}
+              id={`${listId}-option-${i}`}
               role="option"
               aria-selected={i === active}
-              // mouseDown (not click) so the input keeps focus and onBlur doesn't close first
+              // Preserve focus on pointer down; commit on click to permit cancellation.
               onMouseDown={e => {
                 e.preventDefault();
-                pick(p);
               }}
+              onClick={() => pick(p)}
               onMouseEnter={() => setActive(i)}
               className={`flex cursor-pointer items-center gap-3 rounded-md px-2 py-2 ${
                 i === active ? 'bg-sunken' : ''
@@ -115,7 +123,7 @@ export const PlayerSearch = ({ label, pool, excludeIds, disabled, onPick }: Prop
         </ul>
       )}
       {open && query && results.length === 0 && (
-        <div className="absolute inset-x-0 top-full z-30 mt-1 rounded-lg border border-line bg-surface px-3 py-3 text-sm text-muted shadow-lg shadow-ink/10">
+        <div role="status" className="absolute inset-x-0 top-full z-30 mt-1 rounded-lg border border-line bg-surface px-3 py-3 text-sm text-muted shadow-lg shadow-ink/10">
           No player matches &ldquo;{query}&rdquo;.
         </div>
       )}

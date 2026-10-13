@@ -30,3 +30,11 @@ src/
 ```
 
 Stack: React 18, TypeScript, Vite, Tailwind CSS 3, Geist (self-hosted via Fontsource), Lucide icons.
+
+## Design and accessibility
+
+Football playbook styling in light and dark themes, with self-hosted Barlow Condensed and Geist fonts. The accessibility target is WCAG 2.2 AA, following https://www.w3.org/WAI/WCAG22/Understanding/ .
+
+Run `npm run test:a11y` for Playwright and axe checks (Microsoft Edge must be installed). The suite starts Vite automatically and uses deterministic test-only player responses, never production mock data. Covers both themes at 1280px and 320px; empty, search, and populated trade states; arrow-key scoring controls; keyboard player selection; swap, remove and clear; skip link; and network-error recovery. Run `npm run typecheck`, `npm test`, `npm run lint`, and `npm run build` for the other checks.
+
+Automated scans do not establish full WCAG conformance. Screen-reader testing with real assistive technology remains a manual release check. Contrast, visible focus, 44px controls, reduced motion, forced colors, live verdict updates, and non-sticky results are implemented.

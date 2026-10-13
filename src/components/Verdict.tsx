@@ -14,13 +14,13 @@ interface SuggestionsProps {
 }
 
 const headlineFor = (e: TradeEvaluation): { text: string; tone: string } => {
-  if (e.favored === 'even') return { text: 'Fair trade', tone: 'text-ink' };
+  if (e.favored === 'even') return { text: 'Fair trade', tone: 'fair' };
   const larger = Math.max(e.sideA.adjustedValue, e.sideB.adjustedValue);
   const lopsided = Math.abs(e.gap) / larger > 0.25;
   if (e.favored === 'A') {
-    return { text: lopsided ? 'Clearly in your favor' : 'Slightly in your favor', tone: 'text-win' };
+    return { text: lopsided ? 'Clearly in your favor' : 'Slightly in your favor', tone: 'win' };
   }
-  return { text: lopsided ? 'Clearly against you' : 'Slightly against you', tone: 'text-lose' };
+  return { text: lopsided ? 'Clearly against you' : 'Slightly against you', tone: 'lose' };
 };
 
 /** Marker position in percent: centre is even, the ends are a 50% value gap. */
@@ -34,8 +34,8 @@ const markerPercent = (e: TradeEvaluation) => {
 export const Verdict = ({ evaluation }: Props) => {
   if (!evaluation) {
     return (
-      <div className="rounded-lg border border-dashed border-line px-5 py-6">
-        <p className="text-lg font-semibold tracking-tight">Build a trade to see the verdict</p>
+      <div className="verdict-empty">
+        <p className="text-lg font-semibold tracking-tight">Your next move, under review.</p>
         <p className="mt-1 text-sm text-muted">
           Add at least one player to each side. The result updates as you edit.
         </p>
@@ -47,8 +47,8 @@ export const Verdict = ({ evaluation }: Props) => {
   const position = markerPercent(evaluation);
 
   return (
-    <div className="rounded-lg border border-line bg-surface p-4 sm:p-5" aria-live="polite">
-      <p className={`text-xl font-semibold tracking-tight sm:text-2xl ${tone}`}>{text}</p>
+    <div className={`verdict-result verdict-${tone}`}>
+      <p className="text-center text-xl font-semibold tracking-tight sm:text-2xl">{text}</p>
 
       <div className="mt-4">
         <div className="relative h-6" role="img" aria-label={`Trade balance: ${text}`}>
@@ -56,11 +56,11 @@ export const Verdict = ({ evaluation }: Props) => {
           <div className="absolute left-[45%] top-1/2 h-3 w-[10%] -translate-y-1/2 rounded-sm bg-sunken" />
           <div className="absolute left-1/2 top-1/2 h-4 w-px -translate-y-1/2 bg-muted" />
           <div
-            className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface bg-accent transition-[left] duration-300 ease-out"
+            className="absolute top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-surface bg-current transition-[left] duration-300 ease-out"
             style={{ left: `${position}%` }}
           />
         </div>
-        <div className="mt-1 flex justify-between text-xs text-muted">
+        <div className="mt-1 flex justify-between text-xs">
           <span>You give more</span>
           <span>You get more</span>
         </div>
